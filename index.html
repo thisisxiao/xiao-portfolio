@@ -1,0 +1,3923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hi, I'm Xiao</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN SYSTEM — CSS VARIABLES & GLOBAL RESET
+   ============================================================ */
+:root {
+  --color-bg:        #FFFFFF;
+  --color-surface:   #F5F5F5;
+  --color-electric:  #0000FF;
+  --color-dark:      #111111;
+  --color-secondary: #888888;
+  --color-border:    #E0E0E0;
+
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-dark);
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font-body); cursor: pointer; }
+input, textarea, select { font-family: var(--font-body); }
+
+img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* PLACEHOLDER IMAGES */
+.ph { background: #C8C8C8; }
+.ph-dk { background: #999999; }
+.ph-md { background: #B0B0B0; }
+.ph-lt { background: #D8D8D8; }
+.ph-blue { background: var(--color-electric); }
+
+/* SECTION PAGES */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ENTRY ANIMATION */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  height: 56px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 2rem;
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  transition: background 0.3s;
+}
+.nav.scrolled { background: var(--color-bg); }
+
+.nav-left {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.nav-center {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  color: var(--color-electric);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nav-right {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+.nav-left a, .nav-right a {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+  transition: color 0.2s;
+}
+.nav-left a:hover, .nav-right a:hover,
+.nav-left a.active, .nav-right a.active { color: var(--color-electric); }
+/* keep .nav-links alias for mobile toggle JS */
+.nav-links a { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-dark); transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--color-electric); }
+
+/* Hamburger */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+  background: none;
+  border: none;
+}
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--color-dark);
+  transition: all 0.3s;
+}
+
+/* Mobile overlay */
+.nav-mobile {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--color-electric);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile a {
+  color: #fff;
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+}
+.nav-mobile a:hover { opacity: 0.6; }
+.nav-mobile-close {
+  position: absolute;
+  top: 1.5rem; right: 2rem;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--color-dark);
+  padding: 1.2rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6rem;
+}
+.site-footer span, .site-footer a {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+.site-footer a:hover { color: var(--color-electric); }
+.site-footer-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  color: var(--color-dark);
+}
+
+/* ============================================================
+   SHARED UTILITIES
+   ============================================================ */
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+.label-blue { color: var(--color-electric); }
+
+.btn-black {
+  display: inline-block;
+  background: var(--color-dark);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.6rem;
+  border: 1.5px solid var(--color-dark);
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+}
+.btn-black:hover { background: var(--color-electric); border-color: var(--color-electric); }
+
+.btn-outline-black {
+  display: inline-block;
+  background: transparent;
+  color: var(--color-dark);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.6rem;
+  border: 1.5px solid var(--color-dark);
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+}
+.btn-outline-black:hover { background: var(--color-dark); color: #fff; }
+
+.btn-outline-white {
+  display: inline-block;
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.6rem;
+  border: 1.5px solid #fff;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.btn-outline-white:hover { background: #fff; color: var(--color-electric); }
+
+/* ============================================================
+   PAGE LAYOUT WRAPPER
+   ============================================================ */
+.page-content {
+  padding-top: 56px;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   ① ABOUT ME PAGE
+   ============================================================ */
+#about {
+  /* Hero */
+}
+.about-hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 2rem 2.5rem;
+}
+
+.about-hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(80px, 18vw, 200px);
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  color: var(--color-electric);
+  position: relative;
+  z-index: 2;
+  margin-right: -2rem;
+  white-space: nowrap;
+  cursor: default;
+}
+
+
+.about-hero-sub {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-top: 1.2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.about-hero-cta {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 2rem;
+  z-index: 3;
+}
+
+/* Photo collage overlaid on hero */
+.about-hero-photos {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.about-hero-photo-1 {
+  position: absolute;
+  top: 10%;
+  left: 8%;
+  width: clamp(140px, 22vw, 280px);
+  height: clamp(180px, 30vw, 380px);
+}
+.about-hero-photo-2 {
+  position: absolute;
+  top: 25%;
+  right: 6%;
+  width: clamp(110px, 16vw, 210px);
+  height: clamp(140px, 22vw, 290px);
+}
+
+/* About content section */
+.about-content {
+  display: grid;
+  grid-template-columns: 35% 65%;
+  min-height: 70vh;
+  border-top: 1px solid var(--color-border);
+}
+.about-content-photo {
+  position: relative;
+  overflow: hidden;
+}
+.about-content-photo-inner {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+}
+.about-content-right {
+  padding: 4rem 3rem 4rem 4rem;
+}
+.about-section-title {
+  font-family: var(--font-display);
+  font-size: 50px;
+  line-height: 0.9;
+  color: var(--color-electric);
+  margin-bottom: 1.8rem;
+  letter-spacing: 0.02em;
+}
+.about-bio-text {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #333;
+  max-width: 480px;
+  margin-bottom: 3rem;
+}
+.about-stat {
+  margin-bottom: 2.5rem;
+}
+.about-stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(80px, 10vw, 120px);
+  line-height: 0.85;
+  color: var(--color-electric);
+  letter-spacing: -0.02em;
+}
+.about-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-top: 0.4rem;
+}
+.about-skills {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-secondary);
+  line-height: 1.8;
+  max-width: 400px;
+}
+
+/* Selected Work */
+.selected-work {
+  padding: 5rem 2rem;
+}
+.selected-work-title {
+  font-family: var(--font-display);
+  font-size: clamp(60px, 12vw, 140px);
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  color: var(--color-dark);
+  margin-bottom: 3rem;
+}
+.work-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  position: relative;
+}
+.work-item {
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.23,1,0.32,1);
+}
+.work-item:hover {
+  transform: translateY(-6px);
+}
+.work-img {
+  overflow: hidden;
+}
+.work-img-inner {
+  width: 100%;
+  height: clamp(160px, 20vw, 300px) !important;
+  transition: transform 0.5s cubic-bezier(0.23,1,0.32,1);
+}
+.work-item:hover .work-img-inner {
+  transform: scale(1.04);
+}
+.work-img {
+  width: 100%;
+}
+.work-img-inner {
+  width: 100%;
+  height: clamp(180px, 25vw, 360px);
+}
+.work-item:nth-child(2) .work-img-inner { height: clamp(200px, 28vw, 420px); }
+.work-item:nth-child(3) .work-img-inner { height: clamp(160px, 20vw, 280px); }
+.work-meta {
+  padding: 0.8rem 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.work-name {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.work-cat {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-electric);
+}
+
+/* CTA Banner */
+.cta-banner {
+  background: var(--color-electric);
+  padding: 3rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.cta-banner-text {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 7vw, 80px);
+  line-height: 0.88;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   ② PROJECTS PAGE
+   ============================================================ */
+.projects-hero {
+  padding: 4rem 2rem 2rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.projects-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(80px, 16vw, 200px);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--color-dark);
+}
+.projects-hero-count {
+  font-family: var(--font-display);
+  font-size: clamp(60px, 10vw, 120px);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--color-electric);
+}
+.projects-hero-sub {
+  width: 100%;
+  font-size: 13px;
+  color: var(--color-secondary);
+  letter-spacing: 0.05em;
+  margin-top: 0.5rem;
+}
+
+/* Filter */
+.projects-filter {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filter-sep {
+  color: var(--color-border);
+  font-size: 12px;
+}
+.filter-btn {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+  position: relative;
+}
+.filter-btn:hover { color: var(--color-electric); }
+.filter-btn.active {
+  color: var(--color-electric);
+}
+.filter-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0; right: 0;
+  height: 1.5px;
+  background: var(--color-electric);
+}
+
+/* Project list */
+.project-list { }
+.project-row {
+  position: relative;
+  overflow: hidden;
+}
+.project-row-header {
+  display: grid;
+  grid-template-columns: 3rem 1fr auto auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.4rem 2rem;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s;
+}
+.project-row-header:hover {
+  background: var(--color-electric);
+  color: #fff;
+}
+.project-row-header:hover .project-num { opacity: 0; }
+.project-row-header:hover .project-arrow { opacity: 1; }
+.project-row-header:hover .project-cat { color: rgba(255,255,255,0.6); }
+.project-row-header:hover .project-year { color: rgba(255,255,255,0.5); }
+
+.project-num {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--color-electric);
+  transition: opacity 0.2s;
+}
+.project-arrow {
+  position: absolute;
+  left: 1.5rem;
+  font-size: 1.2rem;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.project-title-display {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 52px);
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+.project-cat {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  transition: color 0.25s;
+}
+.project-year {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--color-secondary);
+  white-space: nowrap;
+  transition: color 0.25s;
+}
+
+/* Accordion panel */
+.project-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--color-surface);
+}
+.project-panel.open { max-height: 500px; }
+.project-panel-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+.project-panel-imgs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  align-items: start;
+}
+.project-panel-img {
+  height: 160px;
+}
+.project-panel-img:nth-child(2) {
+  margin-top: 1.5rem;
+}
+.project-panel-text h3 {
+  font-family: var(--font-display);
+  font-size: 36px;
+  color: var(--color-electric);
+  margin-bottom: 0.8rem;
+}
+.project-panel-text p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #444;
+  margin-bottom: 1.2rem;
+}
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.project-tag-pill {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-dark);
+  padding: 0.2rem 0.6rem;
+  color: var(--color-dark);
+}
+
+/* ============================================================
+   ③ PHOTOGRAPHY PAGE
+   ============================================================ */
+.photo-hero {
+  padding: 4rem 2rem 1rem;
+  overflow: hidden;
+}
+.photo-title {
+  font-family: var(--font-display);
+  font-size: clamp(70px, 16vw, 180px);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--color-electric);
+  margin-left: -0.02em;
+  white-space: nowrap;
+}
+.photo-sub {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--color-secondary);
+  margin-top: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+/* Series nav */
+.photo-series {
+  display: flex;
+  gap: 3rem;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+.series-btn {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding-bottom: 4px;
+  transition: color 0.2s;
+  position: relative;
+}
+.series-btn:hover { color: var(--color-dark); }
+.series-btn.active {
+  color: var(--color-dark);
+}
+.series-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--color-electric);
+}
+
+/* Sports & series galleries */
+.sports-gallery, .series-gallery {
+  display: none;
+  padding: 3rem 2rem;
+}
+.sports-gallery.active, .series-gallery.active { display: block; }
+
+.sports-gallery-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.sports-gallery-title {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 8vw, 100px);
+  line-height: 0.85;
+  color: var(--color-electric);
+  letter-spacing: -0.01em;
+}
+.sports-gallery-sub {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+
+.sports-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.sp-item {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  height: 280px;
+}
+.sp-item.sp-wide {
+  grid-column: span 2;
+  height: 340px;
+}
+.sp-item.sp-tall {
+  height: 420px;
+}
+.sp-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+.sp-item:hover img { transform: scale(1.04); }
+.sp-item:hover .ph-overlay { opacity: 1; }
+
+/* Sports sub-albums */
+.sports-sub {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 2rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.sports-sub.visible { display: flex; }
+.sports-sub-sep { color: var(--color-border); font-size: 12px; }
+.sports-album-btn {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding-bottom: 3px;
+  position: relative;
+  transition: color 0.2s;
+}
+.sports-album-btn:hover { color: var(--color-dark); }
+.sports-album-btn.active { color: var(--color-electric); }
+.sports-album-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1.5px;
+  background: var(--color-electric);
+}
+
+/* Photo mosaic */
+.photo-mosaic {
+  padding: 3rem 2rem;
+  columns: 3;
+  column-gap: 8px;
+  position: relative;
+}
+.ph-block {
+  break-inside: avoid;
+  margin-bottom: 8px;
+  cursor: pointer;
+  position: relative;
+  display: block;
+}
+.ph-block img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.ph-block:hover .ph-overlay { opacity: 1; }
+.ph-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,255,0.15);
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ph-overlay-icon {
+  font-size: 2rem;
+  color: #fff;
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+}
+
+/* Row 2 — big number */
+.photo-num-overlay {
+  grid-column: 1 / 6;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-left: 0.5rem;
+}
+.photo-count-num {
+  font-family: var(--font-display);
+  font-size: clamp(100px, 14vw, 180px);
+  line-height: 0.85;
+  color: var(--color-electric);
+  letter-spacing: -0.03em;
+}
+.photo-count-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  max-width: 60px;
+  line-height: 1.4;
+}
+
+/* Collab banner */
+.collab-banner {
+  background: var(--color-dark);
+  padding: 3rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.collab-text {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 72px);
+  color: #fff;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
+}
+
+/* Lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox.open { display: flex; }
+.lightbox-img {
+  max-width: 80vw;
+  max-height: 85vh;
+  background: #222;
+  aspect-ratio: 4/3;
+}
+.lightbox-close {
+  position: absolute;
+  top: 1.5rem; right: 2rem;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.lightbox-prev, .lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  font-size: 3rem;
+  font-family: var(--font-display);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 1rem;
+  line-height: 1;
+  transition: opacity 0.2s;
+}
+.lightbox-prev:hover, .lightbox-next:hover { opacity: 0.5; }
+.lightbox-prev { left: 1rem; }
+.lightbox-next { right: 1rem; }
+
+/* ============================================================
+   ④ CV PAGE
+   ============================================================ */
+.cv-header {
+  padding: 4rem 2rem 2rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.cv-name {
+  font-family: var(--font-display);
+  font-size: clamp(60px, 10vw, 100px);
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  color: var(--color-dark);
+}
+.cv-divider {
+  height: 1px;
+  background: var(--color-dark);
+  margin: 0 2rem;
+}
+.cv-info-row {
+  padding: 1.2rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+.cv-info-sep { margin: 0 0.8rem; }
+
+.cv-body {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  padding: 0 2rem;
+}
+.cv-left {
+  padding: 3rem 3rem 3rem 0;
+  border-right: 1px solid var(--color-dark);
+}
+.cv-right {
+  padding: 3rem 0 3rem 3rem;
+}
+.cv-section-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: 0.02em;
+  color: var(--color-electric);
+  margin-bottom: 1.5rem;
+  margin-top: 2.5rem;
+}
+.cv-section-title:first-child { margin-top: 0; }
+.cv-entry {
+  padding: 1.2rem 0;
+  border-top: 1px solid var(--color-border);
+}
+.cv-entry:last-child { border-bottom: 1px solid var(--color-border); }
+.cv-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.3rem;
+}
+.cv-company {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+.cv-period {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-electric);
+  white-space: nowrap;
+  padding-top: 0.2rem;
+}
+.cv-role {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--color-secondary);
+  margin-bottom: 0.6rem;
+}
+.cv-duties {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.cv-duties li {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #444;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.cv-duties li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--color-secondary);
+}
+
+.cv-intro {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #333;
+  margin-bottom: 2.5rem;
+}
+
+.cv-project-item {
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--color-border);
+}
+.cv-project-item:last-of-type { border-bottom: 1px solid var(--color-border); margin-bottom: 2.5rem; }
+.cv-project-name {
+  font-family: var(--font-display);
+  font-size: 40px;
+  letter-spacing: 0.01em;
+  color: var(--color-dark);
+  line-height: 0.9;
+  margin-bottom: 0.5rem;
+}
+.cv-project-desc {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+}
+
+.cv-skill-group { margin-bottom: 0.9rem; }
+.cv-skill-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-electric);
+  margin-bottom: 0.3rem;
+}
+.cv-skill-list {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   PROJECT DETAIL PAGE
+   ============================================================ */
+.project-detail {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  z-index: 1100;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.project-detail.open { transform: translateY(0); }
+
+.pd-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+.pd-back {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--color-dark);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pd-back:hover { color: var(--color-electric); }
+.pd-back-arrow { font-size: 1rem; }
+.pd-nav-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  color: var(--color-secondary);
+}
+.pd-nav-num {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-secondary);
+}
+
+.pd-hero {
+  padding: 4rem 2rem 3rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.pd-category {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-electric);
+  margin-bottom: 1rem;
+}
+.pd-title {
+  font-family: var(--font-display);
+  font-size: clamp(70px, 14vw, 160px);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--color-dark);
+  margin-bottom: 2rem;
+}
+.pd-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pd-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.pd-images {
+  border-right: 1px solid var(--color-border);
+}
+.pd-img-main {
+  width: 100%;
+  aspect-ratio: 16/10;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+.pd-img-main img { width: 100%; height: 100%; object-fit: cover; }
+.pd-img-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Project gallery slider */
+.pd-slider-wrap {
+  max-width: 800px;
+  margin: 0 auto;
+  user-select: none;
+}
+.pd-slider-track-wrap {
+  overflow: hidden;
+  border-radius: 2px;
+  cursor: grab;
+}
+.pd-slider-track-wrap:active { cursor: grabbing; }
+.pd-slider-track {
+  display: flex;
+  transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
+  will-change: transform;
+}
+.pd-slider-slide {
+  flex: 0 0 100%;
+  aspect-ratio: 16/9;
+}
+.pd-slider-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+.pd-slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.2rem;
+}
+.pd-slider-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-border);
+  transition: background 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+.pd-slider-dot.active {
+  background: var(--color-electric);
+  transform: scale(1.4);
+}
+
+/* Case Study */
+.cs-wrap {
+  padding: 4rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+.cs-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-electric);
+  margin-bottom: 0.6rem;
+}
+.cs-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 48px);
+  letter-spacing: 0.02em;
+  color: var(--color-dark);
+  margin-bottom: 1.2rem;
+  line-height: 1;
+}
+.cs-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+  max-width: 680px;
+}
+.cs-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  margin-top: 2rem;
+}
+.cs-stat {
+  background: var(--color-bg);
+  padding: 1.5rem;
+  text-align: center;
+}
+.cs-stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 60px);
+  color: var(--color-electric);
+  line-height: 1;
+}
+.cs-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-top: 0.4rem;
+}
+.cs-img-placeholder {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-top: 1.5rem;
+}
+.cs-img-placeholder img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.cs-img-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.cs-img-grid .cs-img-placeholder { margin-top: 0; aspect-ratio: 4/3; }
+.cs-quote {
+  border-left: 3px solid var(--color-electric);
+  padding: 1rem 1.5rem;
+  margin-top: 1.5rem;
+  background: rgba(0,0,255,0.03);
+}
+.cs-quote-text {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #333;
+  font-style: italic;
+}
+.cs-quote-attr {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-top: 0.5rem;
+}
+.cs-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.cs-pill {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--color-border);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+}
+.cs-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+.cs-col-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-electric);
+  margin-bottom: 0.75rem;
+}
+.cs-col-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cs-col-list li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  padding-left: 1rem;
+  position: relative;
+}
+.cs-col-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--color-electric);
+}
+.cs-feedback-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.cs-feedback-list li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  padding: 0.75rem 1rem;
+  border-left: 2px solid var(--color-border);
+}
+.cs-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+.pd-img-thumb {
+  aspect-ratio: 1;
+  background: var(--color-surface);
+  overflow: hidden;
+  border-right: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.pd-img-thumb:last-child { border-right: none; }
+.pd-img-thumb:hover { opacity: 0.8; }
+.pd-img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.pd-info {
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.pd-info-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-electric);
+  margin-bottom: 0.6rem;
+}
+.pd-description {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #333;
+}
+.pd-stat-num {
+  font-family: var(--font-display);
+  font-size: 60px;
+  line-height: 0.85;
+  color: var(--color-electric);
+  letter-spacing: -0.02em;
+}
+.pd-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-top: 0.4rem;
+}
+
+.pd-next {
+  border-top: 1px solid var(--color-border);
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.pd-next:hover { background: var(--color-electric); color: #fff; }
+.pd-next:hover .pd-next-label,
+.pd-next:hover .pd-next-name { color: #fff; }
+.pd-next-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: 0.4rem;
+}
+.pd-next-name {
+  font-family: var(--font-display);
+  font-size: 36px;
+  color: var(--color-dark);
+  letter-spacing: 0.01em;
+}
+
+@media print {
+  .nav, .site-footer, .btn-outline-black { display: none !important; }
+  .page-content { padding-top: 0 !important; }
+  body { font-size: 11px; }
+  .cv-name { font-size: 60px; }
+}
+
+/* ============================================================
+   ⑤ CONTACT PAGE
+   ============================================================ */
+.contact-hero {
+  padding: 4rem 2rem 3rem;
+  display: grid;
+  grid-template-columns: 1fr 0.8fr;
+  gap: 3rem;
+  align-items: start;
+}
+.contact-slogan {
+  font-family: var(--font-display);
+  font-size: clamp(70px, 12vw, 160px);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--color-electric);
+}
+.contact-hero-photo {
+  margin-top: 2rem;
+  transform: rotate(2deg);
+  max-width: 400px;
+}
+
+.contact-info-bar {
+  padding: 1.2rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+.contact-info-label { color: var(--color-dark); }
+.contact-info-sep { color: var(--color-border); }
+.contact-email-copy {
+  cursor: pointer;
+  transition: color 0.2s;
+  border-bottom: 1px solid transparent;
+}
+.contact-email-copy:hover { color: var(--color-electric); border-color: var(--color-electric); }
+.contact-email-copy.copied { color: var(--color-electric); }
+
+/* Form */
+.contact-form-section {
+  padding: 4rem 2rem 2rem;
+  max-width: 640px;
+}
+.form-group {
+  margin-bottom: 2.5rem;
+}
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-electric);
+  margin-bottom: 0.6rem;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-dark);
+  padding: 0.5rem 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--color-dark);
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--color-electric);
+  border-bottom-width: 2px;
+}
+.form-input.error, .form-textarea.error { border-color: #CC0000; }
+.form-error {
+  font-size: 11px;
+  color: #CC0000;
+  letter-spacing: 0.06em;
+  margin-top: 0.4rem;
+  display: none;
+}
+.form-error.show { display: block; }
+.form-textarea { height: 120px; resize: none; }
+.form-select { cursor: pointer; }
+.form-select option { background: #fff; }
+
+.form-submit {
+  width: 100%;
+  height: 56px;
+  background: var(--color-dark);
+  color: #fff;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.form-submit:hover { background: var(--color-electric); }
+
+.form-success {
+  display: none;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 8vw, 80px);
+  color: var(--color-electric);
+  letter-spacing: 0.01em;
+  padding: 1.5rem 0;
+}
+.form-success.show { display: block; }
+
+.contact-socials {
+  padding: 3rem 2rem;
+  display: flex;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--color-border);
+}
+.contact-socials a {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  transition: color 0.2s;
+}
+.contact-socials a:hover { color: var(--color-electric); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .nav-left a, .nav-right a { font-size: 10px; gap: 1rem; }
+
+  .about-content { grid-template-columns: 1fr; }
+  .about-content-photo { display: none; }
+  .about-content-right { padding: 3rem 1.5rem; }
+
+  .work-grid { grid-template-columns: 1fr; }
+  .work-item:nth-child(1),
+  .work-item:nth-child(2),
+  .work-item:nth-child(3) {
+    grid-column: 1; grid-row: auto; margin: 0 0 1rem;
+  }
+  .work-item:nth-child(2) { margin-top: 0; }
+  .work-item:nth-child(3) { margin-top: 0; }
+
+  .projects-hero { padding: 3rem 1.5rem 1.5rem; }
+  .project-row-header {
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
+  }
+  .project-cat, .project-year { display: none; }
+
+  .photo-mosaic {
+    columns: 2;
+  }
+
+  .cv-body { grid-template-columns: 1fr; }
+  .cv-left { border-right: none; border-bottom: 1px solid var(--color-dark); padding-right: 0; }
+  .cv-right { padding-left: 0; }
+
+  .contact-hero { grid-template-columns: 1fr; }
+  .contact-hero-photo { max-width: 280px; }
+
+  .project-panel-inner { grid-template-columns: 1fr; }
+
+  .cta-banner, .collab-banner { flex-direction: column; }
+
+  .site-footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<nav class="nav" id="main-nav">
+  <div class="nav-left">
+    <div class="nav-center" onclick="navigate('about')" style="cursor:pointer">XIAO SHEN</div>
+  </div>
+  <div class="nav-center"></div>
+  <div class="nav-right">
+    <a href="#about" onclick="navigate('about');setTimeout(()=>document.getElementById('about-me').scrollIntoView({behavior:'smooth'}),100)">About</a>
+    <a href="#projects"    onclick="navigate('projects')"    data-page="projects">Projects</a>
+    <a href="#photography" onclick="navigate('photography')" data-page="photography">Photography</a>
+    <a href="#cv"          onclick="navigate('cv')"          data-page="cv">CV</a>
+    <a href="#contact"     onclick="navigate('contact')"     data-page="contact">Contact</a>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="nav-mobile" id="mobile-menu">
+  <button class="nav-mobile-close" onclick="toggleMobile()">CLOSE ✕</button>
+  <a href="#about"       onclick="navigate('about');toggleMobile()">About</a>
+  <a href="#projects"    onclick="navigate('projects');toggleMobile()">Projects</a>
+  <a href="#photography" onclick="navigate('photography');toggleMobile()">Photography</a>
+  <a href="#cv"          onclick="navigate('cv');toggleMobile()">CV</a>
+  <a href="#contact"     onclick="navigate('contact');toggleMobile()">Contact</a>
+</div>
+
+<!-- ============================================================
+     PAGE CONTENT
+     ============================================================ -->
+<div class="page-content">
+
+<!-- ① ABOUT ME ─────────────────────────────────────────────── -->
+<section id="about" class="page active">
+
+  <!-- Hero -->
+  <div class="about-hero">
+    <div class="about-hero-name reveal"><span style="font-size:0.35em; font-family:var(--font-body); font-weight:500; letter-spacing:0.08em; display:block; margin-bottom:0.3em; color:var(--color-dark);">Moi, Hi! I'm</span>XIAO<br>SHEN.</div>
+    <div class="about-hero-sub reveal">UX/UI Designer · Developer · Photographer</div>
+    <div class="about-hero-cta">
+      <button class="btn-black" onclick="navigate('projects')">VIEW WORK →</button>
+    </div>
+  </div>
+
+  <!-- About content -->
+  <div class="about-content reveal" id="about-me">
+    <div class="about-content-photo">
+      <img src="images/IMG_0741.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center top;">
+    </div>
+    <div class="about-content-right">
+      <div class="about-section-title">ABOUT<br>ME</div>
+      <p class="about-bio-text">
+        Hello, I'm Xiao Shen. I'm a UX Designer who designs with curiosity and structures with purpose. Grounded in human-centered design principles from my time in Sweden and Finland, I love untangling messy user workflows and transforming them into beautiful, intuitive interfaces. When I'm not in Figma, I'm usually exploring the outdoors with my camera or hiking nature trails.
+      </p>
+      <div class="about-stat">
+        <div class="about-stat-num">4+</div>
+        <div class="about-stat-label">Years of experience</div>
+      </div>
+      <p class="about-skills">
+        UX/UI Design · Figma · React · Frontend Development · Service Design · User Research · Photography · Video Editing
+      </p>
+    </div>
+  </div>
+
+  <!-- Selected Work -->
+  <div class="selected-work reveal">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;">
+      <div class="selected-work-title" style="margin-bottom:0;">SELECTED<br>WORK</div>
+      <button onclick="navigate('projects')" style="font-family:var(--font-body);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:none;border:1px solid var(--color-dark);color:var(--color-dark);padding:0.6rem 1.2rem;cursor:pointer;transition:background 0.2s,color 0.2s;" onmouseover="this.style.background='var(--color-dark)';this.style.color='#fff'" onmouseout="this.style.background='none';this.style.color='var(--color-dark)'">VIEW ALL →</button>
+    </div>
+    <div class="work-grid">
+      <div class="work-item" onclick="navigate('projects');setTimeout(()=>{const h=Array.from(document.querySelectorAll('.project-row-header')).find(el=>el.querySelector('.project-num').textContent==='04');if(h)openProjectDetail(h);},300)" style="cursor:pointer;">
+        <div class="work-img">
+          <div class="work-img-inner" style="background:#0a0a0a;"><img src="images/project/color/vol2/tag-popup.png" style="width:100%;height:100%;object-fit:contain;"></div>
+        </div>
+        <div class="work-meta">
+          <span class="work-name">Color Paradox</span>
+          <span class="work-cat">Website · UX · UI</span>
+        </div>
+      </div>
+      <div class="work-item" onclick="navigate('projects');setTimeout(()=>{const h=Array.from(document.querySelectorAll('.project-row-header')).find(el=>el.querySelector('.project-num').textContent==='02');if(h)openProjectDetail(h);},300)" style="cursor:pointer;">
+        <div class="work-img">
+          <div class="work-img-inner" style="background:#FFC107;display:flex;align-items:center;justify-content:center;gap:1rem;padding:1rem;">
+            <img src="images/project/runaway/Event page.png" style="height:100%;width:auto;max-width:32%;object-fit:contain;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);">
+            <img src="images/project/runaway/friend-page.png" style="height:100%;width:auto;max-width:32%;object-fit:contain;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);">
+            <img src="images/project/runaway/no-event.png" style="height:100%;width:auto;max-width:32%;object-fit:contain;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2);">
+          </div>
+        </div>
+        <div class="work-meta">
+          <span class="work-name">Run Away</span>
+          <span class="work-cat">UX · UI · Mobile</span>
+        </div>
+      </div>
+      <div class="work-item" onclick="navigate('projects');setTimeout(()=>{const h=Array.from(document.querySelectorAll('.project-row-header')).find(el=>el.querySelector('.project-num').textContent==='05');if(h)openProjectDetail(h);},300)" style="cursor:pointer;">
+        <div class="work-img">
+          <div class="work-img-inner" style="background:#3d4a47;"><img src="images/project/checkmate/Main.png" style="width:100%;height:100%;object-fit:contain;"></div>
+        </div>
+        <div class="work-meta">
+          <span class="work-name">Checkmate</span>
+          <span class="work-cat">Website · UX · UI</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner reveal">
+    <div class="cta-banner-text">LET'S CREATE<br>SOMETHING</div>
+    <button class="btn-outline-white" onclick="navigate('contact')">GET IN TOUCH</button>
+  </div>
+
+  <footer class="site-footer">
+    <span>© 2026 Xiao Shen</span>
+    <div class="site-footer-name">XIAO SHEN</div>
+    <a href="#contact" onclick="navigate('contact')">xiaoshen.nordic@outlook.com</a>
+  </footer>
+</section>
+
+<!-- ② PROJECTS ─────────────────────────────────────────────── -->
+<section id="projects" class="page">
+
+  <div class="projects-hero reveal">
+    <span class="projects-hero-title">PROJECTS</span>
+    <span class="projects-hero-count">— 07</span>
+    <div class="projects-hero-sub">Selected works across branding, web, print, and motion.</div>
+  </div>
+
+  <!-- Filter -->
+  <div class="projects-filter">
+    <button class="filter-btn active" data-filter="all" onclick="filterProjects(this,'all')">ALL</button>
+    <span class="filter-sep">/</span>
+    <button class="filter-btn" data-filter="ux" onclick="filterProjects(this,'ux')">UX · UI</button>
+    <span class="filter-sep">/</span>
+    <button class="filter-btn" data-filter="interaction" onclick="filterProjects(this,'interaction')">INTERACTION</button>
+    <span class="filter-sep">/</span>
+    <button class="filter-btn" data-filter="installation" onclick="filterProjects(this,'installation')">INSTALLATION</button>
+  </div>
+
+  <!-- Project list -->
+  <div class="project-list" id="project-list">
+
+    <div class="project-row" data-category="interaction">
+      <div class="project-row-header" onclick="toggleProject(this)">
+        <span class="project-num">01</span>
+        <span class="project-arrow">→</span>
+        <span class="project-title-display">Phone Grave</span>
+        <span class="project-cat">Interaction · Graphic</span>
+        <span class="project-year">2022</span>
+      </div>
+      <div class="project-panel">
+        <div class="project-panel-inner">
+          <div class="project-panel-imgs">
+            <div class="project-panel-img ph-dk" data-replace="phone-grave-img-1"></div>
+            <div class="project-panel-img ph-md" data-replace="phone-grave-img-2"></div>
+          </div>
+          <div class="project-panel-text">
+            <h3>PHONE GRAVE</h3>
+            <p>Due to the development of technology, phones are updated at an increasingly rapid pace. Phone Grave is an interactive way to encourage people to recycle their unused mobile phones — whenever a phone is recycled, a phone grave appears in binary form through holographic projection.</p>
+            <div class="project-tags">
+              <span class="project-tag-pill">Interaction Design</span>
+              <span class="project-tag-pill">Graphic Design</span>
+              <span class="project-tag-pill">Photoshop</span>
+              <span class="project-tag-pill">Rhino</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-row" data-category="ux">
+      <div class="project-row-header" onclick="toggleProject(this)">
+        <span class="project-num">02</span>
+        <span class="project-arrow">→</span>
+        <span class="project-title-display">Run Away</span>
+        <span class="project-cat">UX · UI · Mobile</span>
+        <span class="project-year">2022</span>
+      </div>
+      <div class="project-panel">
+        <div class="project-panel-inner">
+          <div class="project-panel-imgs">
+            <div class="project-panel-img ph-lt" data-replace="run-away-img-1"></div>
+            <div class="project-panel-img ph" data-replace="run-away-img-2"></div>
+          </div>
+          <div class="project-panel-text">
+            <h3>RUN AWAY</h3>
+            <p>More and more international students are coming to Finland, and socializing is becoming a problem. This mobile app brings together all the local student activities and promotes friendships through a new matching method, so that people are not lonely and depressed.</p>
+            <div class="project-tags">
+              <span class="project-tag-pill">UX Design</span>
+              <span class="project-tag-pill">UI Design</span>
+              <span class="project-tag-pill">Mobile App</span>
+              <span class="project-tag-pill">Adobe XD</span>
+              <span class="project-tag-pill">Arduino IDE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-row" data-category="installation">
+      <div class="project-row-header" onclick="toggleProject(this)">
+        <span class="project-num">03</span>
+        <span class="project-arrow">→</span>
+        <span class="project-title-display">Shrine</span>
+        <span class="project-cat">Installation · Exhibition</span>
+        <span class="project-year">2022</span>
+      </div>
+      <div class="project-panel">
+        <div class="project-panel-inner">
+          <div class="project-panel-imgs">
+            <div class="project-panel-img ph-dk" data-replace="shrine-img-1"></div>
+            <div class="project-panel-img ph-lt" data-replace="shrine-img-2"></div>
+          </div>
+          <div class="project-panel-text">
+            <h3>SHRINE</h3>
+            <p>In modern society, the cult of celebrity causes people to indulge in fantasies and ignore reality. This project combines traditional shrine ideas with modern technology, using interactive installation to show that people addicted to their illusions may be scared by reality. It warns people not to overindulge in fantasy.</p>
+            <div class="project-tags">
+              <span class="project-tag-pill">Installation Design</span>
+              <span class="project-tag-pill">Exhibition Design</span>
+              <span class="project-tag-pill">VS Code</span>
+              <span class="project-tag-pill">Arduino</span>
+              <span class="project-tag-pill">Photoshop</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-row" data-category="ux">
+      <div class="project-row-header" onclick="toggleProject(this)">
+        <span class="project-num">04</span>
+        <span class="project-arrow">→</span>
+        <span class="project-title-display">Color Paradox</span>
+        <span class="project-cat">Website · UX · UI</span>
+        <span class="project-year">2022</span>
+      </div>
+      <div class="project-panel">
+        <div class="project-panel-inner">
+          <div class="project-panel-imgs">
+            <div class="project-panel-img ph-dk" data-replace="color-paradox-img-1"></div>
+            <div class="project-panel-img ph-md" data-replace="color-paradox-img-2"></div>
+          </div>
+          <div class="project-panel-text">
+            <h3>COLOR PARADOX</h3>
+            <p>A photo-sharing platform built from a colorblind perspective. After the first login, a color blindness test determines the user's type. When a colorblind user shares a photo, a special filtered image appears for non-colorblind users — giving them a sense of what the world looks like through colorblind eyes.</p>
+            <div class="project-tags">
+              <span class="project-tag-pill">Website Design</span>
+              <span class="project-tag-pill">UX Design</span>
+              <span class="project-tag-pill">UI Design</span>
+              <span class="project-tag-pill">Adobe XD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-row" data-category="ux">
+      <div class="project-row-header" onclick="toggleProject(this)">
+        <span class="project-num">05</span>
+        <span class="project-arrow">→</span>
+        <span class="project-title-display">Checkmate</span>
+        <span class="project-cat">Website · UX · UI</span>
+        <span class="project-year">2022</span>
+      </div>
+      <div class="project-panel">
+        <div class="project-panel-inner">
+          <div class="project-panel-imgs">
+            <div class="project-panel-img ph-lt" data-replace="checkmate-img-1"></div>
+            <div class="project-panel-img ph" data-replace="checkmate-img-2"></div>
+          </div>
+          <div class="project-panel-text">
+            <h3>CHECKMATE</h3>
+            <p>There are a growing number of people working remotely. Many different software programs need to be used simultaneously, creating the risk of missing or forgetting messages. The Checkmate platform helps users organize different software and create to-do lists in an easy way, making remote work more organized.</p>
+            <div class="project-tags">
+              <span class="project-tag-pill">Website Design</span>
+              <span class="project-tag-pill">UX Design</span>
+              <span class="project-tag-pill">UI Design</span>
+              <span class="project-tag-pill">Adobe XD</span>
+              <span class="project-tag-pill">Illustrator</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-row" data-category="ux" style="display:none;" data-hidden="true">
+      <div class="project-row-header" onclick="toggleProject(this)">
+        <span class="project-num">07</span>
+        <span class="project-arrow">→</span>
+        <span class="project-title-display">Diplomagic</span>
+        <span class="project-cat">UX · UI · Web Development</span>
+        <span class="project-year">2024</span>
+      </div>
+      <div class="project-panel">
+        <div class="project-panel-inner">
+          <div class="project-panel-imgs">
+            <div class="project-panel-img ph-dk" data-replace="diplomagic-img-1"></div>
+            <div class="project-panel-img ph-md" data-replace="diplomagic-img-2"></div>
+          </div>
+          <div class="project-panel-text">
+            <h3>DIPLOMAGIC</h3>
+            <p>A fun quiz-based web app for Harry Potter fans — answer a series of questions to discover whether you're a Muggle or a wizard. Designed and developed as a school project with a focus on interactive UX flow and responsive UI.</p>
+            <div class="project-tags">
+              <span class="project-tag-pill">UX Design</span>
+              <span class="project-tag-pill">UI Design</span>
+              <span class="project-tag-pill">React</span>
+              <span class="project-tag-pill">REST API</span>
+              <span class="project-tag-pill">Git</span>
+            </div>
+            <a href="https://diplo-magic.web.app" target="_blank" style="display:inline-block;margin-top:1rem;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-electric);">VISIT SITE ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-row" data-category="ux">
+      <div class="project-row-header" onclick="toggleProject(this)">
+        <span class="project-num">06</span>
+        <span class="project-arrow">→</span>
+        <span class="project-title-display">Sweasy</span>
+        <span class="project-cat">UX · UI · Service Design</span>
+        <span class="project-year">2023</span>
+      </div>
+      <div class="project-panel">
+        <div class="project-panel-inner">
+          <div class="project-panel-imgs">
+            <div class="project-panel-img ph-dk" data-replace="sweasy-img-1"></div>
+            <div class="project-panel-img ph-md" data-replace="sweasy-img-2"></div>
+          </div>
+          <div class="project-panel-text">
+            <h3>SWEASY</h3>
+            <p>Focusing on immigrants' interdependent experiences in navigating banking and administrative processes in a new country, where success hinges on access to accurate information and collaboration among various administrative services. Designing for interdependence — rethinking tech's self-sufficiency bias and valuing human differences.</p>
+            <div class="project-tags">
+              <span class="project-tag-pill">UX Design</span>
+              <span class="project-tag-pill">UI Design</span>
+              <span class="project-tag-pill">Service Design</span>
+              <span class="project-tag-pill">Figma</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    <span>© 2026 Xiao Shen</span>
+    <div class="site-footer-name">XIAO SHEN</div>
+    <a href="#contact" onclick="navigate('contact')">xiaoshen.nordic@outlook.com</a>
+  </footer>
+</section>
+
+<!-- ③ PHOTOGRAPHY ──────────────────────────────────────────── -->
+<section id="photography" class="page">
+
+  <div class="photo-hero reveal">
+    <div class="photo-title">PHOTO<br>GRAPHY</div>
+    <div class="photo-sub">Moments caught between intention and accident.</div>
+  </div>
+
+  <div class="photo-series">
+    <button class="series-btn active" data-series="film" onclick="activeSeries(this,'film')">FILM</button>
+    <button class="series-btn" data-series="events" onclick="activeSeries(this,'events')">EVENTS</button>
+    <button class="series-btn" data-series="landscape" onclick="activeSeries(this,'landscape')">LANDSCAPE</button>
+    <button class="series-btn" data-series="sports" onclick="activeSeries(this,'sports')">SPORTS</button>
+  </div>
+
+  <!-- Events sub-albums -->
+  <div class="sports-sub" id="events-sub">
+    <button class="sports-album-btn active" data-album="slush" onclick="activeEventsAlbum(this,'slush')">SLUSH 2024</button>
+  </div>
+
+  <!-- Sports sub-albums (hidden by default) -->
+  <div class="sports-sub" id="sports-sub">
+    <button class="sports-album-btn active" data-album="volleyball" onclick="activeSportsAlbum(this,'volleyball')">VOLLEYBALL</button>
+    <span class="sports-sub-sep">·</span>
+    <button class="sports-album-btn" data-album="climbing" onclick="activeSportsAlbum(this,'climbing')">CLIMBING</button>
+  </div>
+
+  <!-- Default mosaic (non-sports) -->
+  <div class="photo-mosaic" id="photo-mosaic-main">
+    <div class="ph-block" onclick="openLightbox(0,'main')" style="background:none;">
+      <img src="images/film/1.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(1,'main')" style="background:none;">
+      <img src="images/film/081070671lf0dc699569fe7fbe7f37ff.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="photo-num-overlay">
+      <div class="photo-count-num">37</div>
+      <div class="photo-count-label">FRAMES IN THIS SERIES</div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(2,'main')" style="background:none;">
+      <img src="images/film/2302f5c06v584b52ec0bbe2022f02aec.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(3,'main')" style="background:none;">
+      <img src="images/film/42411ac4bvc30b48d162d8ef89a50d2b.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(4,'main')" style="background:none;">
+      <img src="images/film/6966df612nd6a56f3c3b438602141926.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(5,'main')" style="background:none;">
+      <img src="images/film/8074449f2s9dd2650bf1effd3970ef1f.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(6,'main')" style="background:none;">
+      <img src="images/film/a6f06e41dp5205c9a6ece721cff3c738.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(7,'main')" style="background:none;">
+      <img src="images/film/028f97ffeoa82106bd38362e4d63a338 3.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(8,'main')" style="background:none;">
+      <img src="images/film/12b3d5457gb532a97050cb9eb4c987ff 2.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(9,'main')" style="background:none;">
+      <img src="images/film/2c7c1de2dq7684900700547a7b86a78c 2.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(10,'main')" style="background:none;">
+      <img src="images/film/2de0df4bdv88e51c98cebb83bf6f22fc 3.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(11,'main')" style="background:none;">
+      <img src="images/film/386a12295ga74db4f148504e25c05489 2.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(12,'main')" style="background:none;">
+      <img src="images/film/3a02f3504jd4b70a9111abbb94e2b3de.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(13,'main')" style="background:none;">
+      <img src="images/film/429ed395ep513598406086d713e66b21.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(14,'main')" style="background:none;">
+      <img src="images/film/5dc29e971uad4533850c53577c5674b7.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(15,'main')" style="background:none;">
+      <img src="images/film/5eda3d8d5ne9bcf20d53d0b88f694b3c 2.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(16,'main')" style="background:none;">
+      <img src="images/film/7d2c2bc05m7a0461175bb7923e855c1d.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(17,'main')" style="background:none;">
+      <img src="images/film/8a065da22u59c916c5ac9bbc10cec967.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(18,'main')" style="background:none;">
+      <img src="images/film/9497e7bb1l4b1ee03ea7ff773770e092.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(19,'main')" style="background:none;">
+      <img src="images/film/IMG_9737.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(20,'main')" style="background:none;">
+      <img src="images/film/cb4ebcf27ufdef6d5ed14ecd435257f2.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(21,'main')" style="background:none;">
+      <img src="images/film/eb31940d0ncedf62af884158529f2704 2.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(22,'main')" style="background:none;">
+      <img src="images/film/ec7314be2t703a4a4dcd69747b048e53.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(23,'main')" style="background:none;">
+      <img src="images/film/ed592e46bqe16e39cd976a44d9f44538 3.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(24,'main')" style="background:none;">
+      <img src="images/film/1983b5ec6k41f749439b844c624ec1b3 2.JPG" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(25,'main')" style="background:none;">
+      <img src="images/film/000001 2.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(26,'main')" style="background:none;">
+      <img src="images/film/000001.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(27,'main')" style="background:none;">
+      <img src="images/film/000026.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(28,'main')" style="background:none;">
+      <img src="images/film/000047.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(29,'main')" style="background:none;">
+      <img src="images/film/000050(2).jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(30,'main')" style="background:none;">
+      <img src="images/film/000055.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(31,'main')" style="background:none;">
+      <img src="images/film/000064.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(32,'main')" style="background:none;">
+      <img src="images/film/000066(1).jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(33,'main')" style="background:none;">
+      <img src="images/film/IMG_3811 2.jpg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(34,'main')" style="background:none;">
+      <img src="images/film/R1-02.jpeg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(35,'main')" style="background:none;">
+      <img src="images/film/R1-04.jpeg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+    <div class="ph-block" onclick="openLightbox(36,'main')" style="background:none;">
+      <img src="images/film/R1-28A.jpeg" style="width:100%;height:100%;object-fit:cover;">
+      <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+    </div>
+  </div>
+
+  <!-- VOLLEYBALL gallery -->
+  <div class="sports-gallery" id="gallery-volleyball">
+    <div class="sports-gallery-header">
+      <div class="sports-gallery-title">VOLLEYBALL</div>
+      <div class="sports-gallery-sub">CEV Champions League · 2026</div>
+    </div>
+    <div class="sports-photo-grid">
+      <div class="sp-item sp-wide" onclick="openLightbox(0,'volleyball')">
+        <img src="images/sports/volleyball/DSC_2242.jpg" alt="Volleyball 1">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item sp-tall" onclick="openLightbox(1,'volleyball')">
+        <img src="images/sports/volleyball/DSC_2345.jpg" alt="Volleyball 2">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(2,'volleyball')">
+        <img src="images/sports/volleyball/DSC_2437.jpg" alt="Volleyball 3">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item sp-wide" onclick="openLightbox(3,'volleyball')">
+        <img src="images/sports/volleyball/DSC_2675.jpg" alt="Volleyball 4">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(4,'volleyball')">
+        <img src="images/sports/volleyball/DSC_2805.jpg" alt="Volleyball 5">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(5,'volleyball')">
+        <img src="images/sports/volleyball/DSC_2984.jpg" alt="Volleyball 6">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item sp-wide" onclick="openLightbox(6,'volleyball')">
+        <img src="images/sports/volleyball/DSC_3015.jpg" alt="Volleyball 7">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(7,'volleyball')">
+        <img src="images/sports/volleyball/DSC_3102.jpg" alt="Volleyball 8">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS gallery -->
+  <div class="series-gallery" id="gallery-events">
+    <div class="sports-gallery-header">
+      <div class="sports-gallery-title">SLUSH 2024</div>
+      <div class="sports-gallery-sub">Volunteer Photographer · Helsinki, Finland</div>
+    </div>
+    <div class="photo-mosaic" style="padding:0 2rem 3rem;">
+      <div class="ph-block" onclick="openLightbox(0,'events')">
+        <img src="images/events/slush/Slush2024_Xiao_Shen.jpg" style="width:100%;height:auto;display:block;">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="ph-block" onclick="openLightbox(1,'events')">
+        <img src="images/events/slush/Slush2024_Xiao_Shen-5 2.jpg" style="width:100%;height:auto;display:block;">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="ph-block" onclick="openLightbox(2,'events')">
+        <img src="images/events/slush/Slush2024_Xiao_Shen-10.jpg" style="width:100%;height:auto;display:block;">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="ph-block" onclick="openLightbox(3,'events')">
+        <img src="images/events/slush/Slush2024_Xiao_Shen-16.jpg" style="width:100%;height:auto;display:block;">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="ph-block" onclick="openLightbox(4,'events')">
+        <img src="images/events/slush/Slush2024_Xiao_Shen-31.jpg" style="width:100%;height:auto;display:block;">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="ph-block" onclick="openLightbox(5,'events')">
+        <img src="images/events/slush/Slush2024_Xiao_Shen-31-2.jpg" style="width:100%;height:auto;display:block;">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="ph-block" onclick="openLightbox(6,'events')">
+        <img src="images/events/slush/IMG_8670.jpg" style="width:100%;height:auto;display:block;">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="ph-block" onclick="openLightbox(7,'events')">
+        <img src="images/events/slush/IMG_8678.jpg" style="width:100%;height:auto;display:block;">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LANDSCAPE gallery -->
+  <div class="series-gallery" id="gallery-landscape">
+    <div class="sports-gallery-header">
+      <div class="sports-gallery-title">LANDSCAPE</div>
+      <div class="sports-gallery-sub">Nature &amp; Environment</div>
+    </div>
+    <div class="sports-photo-grid">
+      <div class="sp-item sp-wide" onclick="openLightbox(0,'landscape')">
+        <img src="images/landscape/DSC_3412 2.jpg" alt="Landscape 1">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item sp-tall" onclick="openLightbox(1,'landscape')">
+        <img src="images/landscape/DSC_3414.jpg" alt="Landscape 2">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(2,'landscape')">
+        <img src="images/landscape/DSC_3498.jpg" alt="Landscape 3">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(3,'landscape')">
+        <img src="images/landscape/DSC_3647 2.jpg" alt="Landscape 4">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item sp-wide" onclick="openLightbox(4,'landscape')">
+        <img src="images/landscape/DSC_3652 2.jpg" alt="Landscape 5">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(5,'landscape')">
+        <img src="images/landscape/DSC_3653 2.jpg" alt="Landscape 6">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIMBING gallery (placeholder) -->
+  <div class="series-gallery" id="gallery-climbing">
+    <div class="sports-gallery-header">
+      <div class="sports-gallery-title">CLIMBING</div>
+      <div class="sports-gallery-sub">Bouldering · 2024</div>
+    </div>
+    <div class="sports-photo-grid">
+      <div class="sp-item sp-wide" onclick="openLightbox(0,'climbing')">
+        <img src="images/sports/climibing/IMG_0739.jpg" alt="Climbing 1">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item sp-tall" onclick="openLightbox(1,'climbing')">
+        <img src="images/sports/climibing/IMG_0740.jpg" alt="Climbing 2">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(2,'climbing')">
+        <img src="images/sports/climibing/IMG_1373.JPG" alt="Climbing 3">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(3,'climbing')">
+        <img src="images/sports/climibing/IMG_1376.JPG" alt="Climbing 4">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(4,'climbing')">
+        <img src="images/sports/climibing/IMG_1380.JPG" alt="Climbing 5">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+      <div class="sp-item" onclick="openLightbox(5,'climbing')">
+        <img src="images/sports/climibing/IMG_1381.JPG" alt="Climbing 6">
+        <div class="ph-overlay"><div class="ph-overlay-icon">VIEW</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="collab-banner reveal">
+    <div class="collab-text">AVAILABLE FOR<br>COLLABORATION</div>
+    <button class="btn-outline-white" onclick="navigate('contact')">CONTACT ME →</button>
+  </div>
+
+  <footer class="site-footer">
+    <span>© 2026 Xiao Shen</span>
+    <div class="site-footer-name">XIAO SHEN</div>
+    <a href="#contact" onclick="navigate('contact')">xiaoshen.nordic@outlook.com</a>
+  </footer>
+</section>
+
+<!-- Project Detail Page -->
+<div class="project-detail" id="project-detail">
+  <div class="pd-nav">
+    <button class="pd-back" onclick="closeProjectDetail()">
+      <span class="pd-back-arrow">←</span> ALL PROJECTS
+    </button>
+    <div class="pd-nav-title" id="pd-nav-title"></div>
+    <div class="pd-nav-num" id="pd-nav-num"></div>
+  </div>
+
+  <div class="pd-hero">
+    <div class="pd-category" id="pd-category"></div>
+    <div class="pd-title" id="pd-title"></div>
+    <div class="pd-tools" id="pd-tools"></div>
+  </div>
+
+  <div class="pd-body">
+    <div class="pd-images">
+      <div class="pd-img-main" id="pd-img-main">
+        <div class="ph-dk" style="width:100%;height:100%;" id="pd-img-main-inner"></div>
+      </div>
+      <div class="pd-img-grid" id="pd-img-grid"></div>
+    </div>
+    <div class="pd-info">
+      <div>
+        <div class="pd-info-label">About the Project</div>
+        <p class="pd-description" id="pd-description"></p>
+      </div>
+      <div id="pd-extra"></div>
+    </div>
+  </div>
+
+  <!-- Gallery slider (shown when project has gallery) -->
+  <div id="pd-gallery-slider" style="display:none; padding: 3rem 2rem; border-top: 1px solid var(--color-border);">
+    <div class="pd-info-label" style="margin-bottom:1.5rem;">Gallery</div>
+    <div class="pd-slider-wrap">
+      <div class="pd-slider-track-wrap" id="pd-slider-wrap-inner">
+        <div class="pd-slider-track" id="pd-slider-track"></div>
+      </div>
+      <div class="pd-slider-dots" id="pd-slider-dots"></div>
+    </div>
+  </div>
+
+  <!-- Case Study (Color Paradox) -->
+  <div id="pd-case-study-color-paradox" class="pd-case-study-section" style="display:none; border-top:1px solid var(--color-border);">
+    <div class="cs-wrap">
+
+      <!-- 01 Background -->
+      <div>
+        <div class="cs-section-label">01 — Background Research</div>
+        <div class="cs-section-title">THE PROBLEM</div>
+        <p class="cs-text">While picking avocados at a supermarket, the question arose: what if someone cannot distinguish color correctly? Approximately <strong>300,000,000 people</strong> worldwide have color vision deficiency — inherited at birth, affecting 8% of males and less than 1% of females.</p>
+        <div class="cs-stats">
+          <div class="cs-stat"><div class="cs-stat-num">71.7%</div><div class="cs-stat-label">Protanopia (Red-Blind)</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">27.6%</div><div class="cs-stat-label">Deuteranopes (Green-Blind)</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">0.6%</div><div class="cs-stat-label">Tritanopes (Blue-Blind)</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;">Color vision deficiency can be frustrating and may limit participation in some occupations. Some professions may be challenging or downright dangerous without the ability to distinguish different hues.</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 02 User Research -->
+      <div>
+        <div class="cs-section-label">02 — User Research</div>
+        <div class="cs-section-title">QUESTIONNAIRE</div>
+        <p class="cs-text">148 participants surveyed (40 males, 108 females). Over 97% considered they can recognize colors correctly — yet <strong>67.6% had never cared about or paid attention to colorblind people.</strong></p>
+        <div class="cs-stats">
+          <div class="cs-stat"><div class="cs-stat-num">88%</div><div class="cs-stat-label">Color matters in Fashion</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">83%</div><div class="cs-stat-label">Color matters in Instruction</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">81%</div><div class="cs-stat-label">Color matters in Psychology</div></div>
+        </div>
+        <img src="images/project/color/research-chart.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'color-research')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 03 Interview -->
+      <div>
+        <div class="cs-section-label">03 — User Interview</div>
+        <div class="cs-section-title">TALKING TO USERS</div>
+        <p class="cs-text">Interviewed Song, 19, a university student with red-green color blindness. Key pain points surfaced around daily life challenges with color perception.</p>
+        <div class="cs-quote">
+          <div class="cs-quote-text">"I have problem to distinguish traffic lights, although I know red and yellow. Green light is whitish to me. I adjust the saturation and contrast of pictures I have taken, according to my feelings."</div>
+          <div class="cs-quote-attr">— Song, Age 19 · Red-green color blindness</div>
+        </div>
+        <img src="images/project/color/interview-doc.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;" onclick="openLightbox(0,'color-interview')" style="cursor:zoom-in;">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 04 Design Insight -->
+      <div>
+        <div class="cs-section-label">04 — Design Insight</div>
+        <div class="cs-section-title">USER REQUIREMENTS</div>
+        <div class="cs-two-col">
+          <div>
+            <div class="cs-col-title">Colorblind Users</div>
+            <ul class="cs-col-list">
+              <li>Understand colors they have not seen before</li>
+              <li>Not be looked at differently</li>
+              <li>Share their unique color perspective</li>
+            </ul>
+          </div>
+          <div>
+            <div class="cs-col-title">Non-Colorblind Users</div>
+            <ul class="cs-col-list">
+              <li>Understand color from a colorblind perspective</li>
+              <li>Break prejudice against color blindness</li>
+              <li>Learn how colorblind users experience color</li>
+            </ul>
+          </div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;"><strong>Conclusion:</strong> Create a platform where colorblind and non-colorblind people can communicate and understand each other through shared photo experiences and personalized color definitions.</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 05 User Flow -->
+      <div>
+        <div class="cs-section-label">05 — Design Process</div>
+        <div class="cs-section-title">USER FLOW & WIREFRAMES</div>
+        <p class="cs-text">Mapped out two distinct user journeys — one for colorblind users uploading and tagging photos, and one for non-colorblind users discovering and browsing color palettes. Low-fidelity wireframes validated the core navigation logic before moving to high-fidelity design.</p>
+        <img src="images/project/color/userflow-lofi.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 06 UI Design -->
+      <div>
+        <div class="cs-section-label">06 — UI Design</div>
+        <div class="cs-section-title">DESIGN SYSTEM</div>
+        <p class="cs-text">A dark-themed interface with vibrant accent colors. Typography uses Arachne for display titles, Arial for body text. The color palette deliberately reflects a bold, inclusive aesthetic — challenging the idea that color is only for those who see it "normally".</p>
+        <div class="cs-pills">
+          <span class="cs-pill">Arachne — Display</span>
+          <span class="cs-pill">Arial — Body</span>
+          <span class="cs-pill" style="background:#F7C345;">#F7C345</span>
+          <span class="cs-pill" style="background:#D0569A; color:#fff;">#D0569A</span>
+          <span class="cs-pill" style="background:#574398; color:#fff;">#574398</span>
+          <span class="cs-pill" style="background:#4B4B4B; color:#fff;">#4B4B4B</span>
+        </div>
+        <div class="cs-mini-slider" id="cs-slider-color-hifi" style="position:relative;width:100%;aspect-ratio:16/9;margin-top:1.5rem;overflow:hidden;border-radius:4px;background:#111;cursor:zoom-in;">
+          <div class="cs-mini-track" style="display:flex;width:200%;height:100%;transition:transform 0.4s cubic-bezier(0.23,1,0.32,1);">
+            <img src="images/project/color/hifi-screens.png" style="width:50%;height:100%;object-fit:contain;flex-shrink:0;" onclick="openLightbox(0,'color-hifi')">
+            <img src="images/project/color/hifi-screens-2.png" style="width:50%;height:100%;object-fit:contain;flex-shrink:0;" onclick="openLightbox(1,'color-hifi')">
+          </div>
+          <button onclick="csSlide('color-hifi',-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">‹</button>
+          <button onclick="csSlide('color-hifi',1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">›</button>
+          <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;">
+            <span class="cs-dot active" data-slider="color-hifi" data-i="0" style="width:6px;height:6px;border-radius:50%;background:#fff;opacity:1;cursor:pointer;" onclick="csGoTo('color-hifi',0)"></span>
+            <span class="cs-dot" data-slider="color-hifi" data-i="1" style="width:6px;height:6px;border-radius:50%;background:#fff;opacity:0.4;cursor:pointer;" onclick="csGoTo('color-hifi',1)"></span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 07 Feedback -->
+      <div>
+        <div class="cs-section-label">07 — Reflection</div>
+        <div class="cs-section-title">FEEDBACK & LEARNINGS</div>
+        <p class="cs-text">After user testing, four key areas for improvement were identified:</p>
+        <ul class="cs-feedback-list">
+          <li>Image uploads need to be reviewed to prevent unsuitable images</li>
+          <li>The color palette collection feature is not clearly explained to new users</li>
+          <li>Colorblind users unintentionally navigate to non-colorblind user pages — flows need clearer separation</li>
+          <li>Color tags are not obvious enough — need stronger visual affordance</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Run Away Case Study -->
+  <div id="pd-case-study-run-away" class="pd-case-study-section" style="display:none; border-top:1px solid var(--color-border);">
+    <div class="cs-wrap">
+
+      <!-- 01 Background -->
+      <div>
+        <div class="cs-section-label">01 — Background Research</div>
+        <div class="cs-section-title">THE PROBLEM</div>
+        <p class="cs-text">Finland is known as one of the happiest countries — yet depression is a serious phenomenon, especially among immigrants and young people. The pandemic worsened isolation, anxiety and depression across the country.</p>
+        <div class="cs-stats">
+          <div class="cs-stat"><div class="cs-stat-num">70%</div><div class="cs-stat-label">Take anti-depressant medications</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">20%</div><div class="cs-stat-label">Suffer mild symptoms of depression</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">17.4%</div><div class="cs-stat-label">University students with mental illness</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;">Foreigners make up 8% of Finland's population and 5% of all foreigners are international students. Mental health symptoms are significantly more common among people with a foreign background — and the proportion diagnosed with depression and anxiety has <strong>almost tripled since 2000</strong>.</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 02 Questionnaire -->
+      <div>
+        <div class="cs-section-label">02 — User Research</div>
+        <div class="cs-section-title">QUESTIONNAIRE</div>
+        <p class="cs-text">Survey included both foreigners and Finns living in Finland, revealing a strong desire to connect — yet significant systemic barriers to doing so.</p>
+        <div class="cs-stats">
+          <div class="cs-stat"><div class="cs-stat-num">83%</div><div class="cs-stat-label">Want to integrate into Finnish society</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">95%</div><div class="cs-stat-label">Say lack of socialising has psychological impact</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">57%</div><div class="cs-stat-label">Find it difficult to make new friends in Finland</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;">Key barriers: <strong>Language (58%)</strong>, Culture (50%), Hobbies (33%). People most often socialise through schoolmates (84%), internet (78%), and social activities (68%).</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 03 Interviews -->
+      <div>
+        <div class="cs-section-label">03 — User Interviews</div>
+        <div class="cs-section-title">THREE PERSONAS</div>
+        <p class="cs-text">Three interviews uncovered distinct but overlapping needs across foreigners and locals.</p>
+        <div class="cs-two-col" style="grid-template-columns:1fr 1fr 1fr; gap:1.5rem;">
+          <div>
+            <div class="cs-col-title">Anella · 20 · Estonia</div>
+            <p style="font-size:13px;color:#333;line-height:1.6;font-style:italic;">"I want to make new friends, but sometimes it is hard to get into their friend circle."</p>
+            <ul class="cs-col-list" style="margin-top:0.75rem;">
+              <li>Wants to talk with people who share same interests</li>
+              <li>Difficult to enter Finnish friend circles</li>
+            </ul>
+          </div>
+          <div>
+            <div class="cs-col-title">Liisa · 19 · Finland</div>
+            <p style="font-size:13px;color:#333;line-height:1.6;font-style:italic;">"I need to find new ways to meet friends. I am willing to know people with different backgrounds."</p>
+            <ul class="cs-col-list" style="margin-top:0.75rem;">
+              <li>Wants to learn different cultures</li>
+              <li>No chance to meet new people after school</li>
+            </ul>
+          </div>
+          <div>
+            <div class="cs-col-title">Timo · 28 · Finland</div>
+            <p style="font-size:13px;color:#333;line-height:1.6;font-style:italic;">"I want to meet someone who has same interests and be like Finnish people."</p>
+            <ul class="cs-col-list" style="margin-top:0.75rem;">
+              <li>Conversations always turn into monologue</li>
+              <li>Language and culture barriers</li>
+            </ul>
+          </div>
+        </div>
+        <img src="images/project/runaway/persona-cards.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'runaway-persona')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 04 Design Insight -->
+      <div>
+        <div class="cs-section-label">04 — Design Insight</div>
+        <div class="cs-section-title">FROM PAIN POINTS TO SOLUTIONS</div>
+        <div class="cs-two-col">
+          <div>
+            <div class="cs-col-title">Pain Points</div>
+            <ul class="cs-col-list">
+              <li>Difficult to get into local friend circles</li>
+              <li>Language and culture barriers</li>
+              <li>No opportunities to meet new people</li>
+            </ul>
+          </div>
+          <div>
+            <div class="cs-col-title">Solutions</div>
+            <ul class="cs-col-list">
+              <li>Take part in shared activities</li>
+              <li>Learn a new language and adapt to life</li>
+              <li>Join more activities and socialise</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cs-quote" style="margin-top:1.5rem;">
+          <div class="cs-quote-text">Finnish university students wear different coloured overalls depending on their schools and majors — showing personality through badges. This became the inspiration for the matching mechanic in Run Away.</div>
+          <div class="cs-quote-attr">— Design Inspiration</div>
+        </div>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 05 Design Process -->
+      <div>
+        <div class="cs-section-label">05 — Design Process</div>
+        <div class="cs-section-title">LOW FIDELITY & USER TESTING</div>
+        <p class="cs-text">Wireframes covered the full flow: login, event browsing, friend matching, and personal profile. User testing surfaced three key problems:</p>
+        <ul class="cs-col-list" style="margin-top:1rem;">
+          <li>How to confirm the new friend is a real person</li>
+          <li>How to attract more users</li>
+          <li>New users may not know how to use the app</li>
+        </ul>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Solutions:</strong> Added verification page, rewards promotion system, and onboarding tips.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1.5rem;">
+          <img src="images/project/runaway/lofi-wireframes.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'runaway-lofi')">
+          <img src="images/project/runaway/user-flow.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(1,'runaway-lofi')">
+        </div>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 06 UI Design -->
+      <div>
+        <div class="cs-section-label">06 — UI Design</div>
+        <div class="cs-section-title">DESIGN SYSTEM</div>
+        <p class="cs-text">A warm, approachable visual language with floral logo motifs inspired by Finnish student culture. The palette balances trust (blue) with energy (yellow).</p>
+        <div class="cs-pills">
+          <span class="cs-pill" style="background:#3490C8; color:#fff;">#3490C8 — Blue</span>
+          <span class="cs-pill" style="background:#F8B62D;">#F8B62D — Yellow</span>
+        </div>
+        <img src="images/project/runaway/hifi-screens.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'runaway-hifi')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 07 Matching Flow -->
+      <div>
+        <div class="cs-section-label">07 — Key Feature</div>
+        <div class="cs-section-title">MATCHING MECHANIC</div>
+        <p class="cs-text">The core innovation: a physical Arduino device with an LED 8×8 matrix display (MAX7219). At events, users hold their devices together — if the patterns match, they've found a compatible friend. The key insight: <strong>interaction must be physical and playful</strong>, not just digital.</p>
+        <div class="cs-stats">
+          <div class="cs-stat"><div class="cs-stat-num">1</div><div class="cs-stat-label">Join the event</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">2</div><div class="cs-stat-label">Get the device</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">3</div><div class="cs-stat-label">Match the pattern</div></div>
+        </div>
+        <img src="images/project/runaway/arduino-demo.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'runaway-arduino')">
+        <a href="https://www.youtube.com/watch?v=Sx51Uv6kPVE&feature=youtu.be" target="_blank" style="display:inline-block;margin-top:1.5rem;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-electric);text-decoration:none;">▶ WATCH DEMO VIDEO ↗</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sweasy Case Study -->
+  <div id="pd-case-study-sweasy" class="pd-case-study-section" style="display:none; border-top:1px solid var(--color-border);">
+    <div class="cs-wrap">
+
+      <!-- 01 Design Brief -->
+      <div>
+        <div class="cs-section-label">01 — Design Brief</div>
+        <div class="cs-section-title">YOUR GATEWAY TO INFORMATION THAT'S EASY</div>
+        <p class="cs-text"><strong>Brief:</strong> Designing for interdependence — rethinking tech's self-sufficiency bias, and exploring new approaches that value human differences and sustain the ecology of care in everyday activities and technology use.</p>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Our Interpretation:</strong> Focusing on immigrants' interdependent experiences in navigating banking and administrative processes in a new country, where success hinges on access to accurate information and collaboration among various administrative services.</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 02 User Research -->
+      <div>
+        <div class="cs-section-label">02 — User Research</div>
+        <div class="cs-section-title">SEMI-STRUCTURED INTERVIEWS & AFFINITY MAPPING</div>
+        <p class="cs-text">We conducted <strong>8 semi-structured interviews</strong> with people who moved to Sweden for work. The open nature of the interviews allowed us to gather rich insights on the challenges and highlights involved in the moving process.</p>
+        <p class="cs-text" style="margin-top:1rem;">To draw insights from our interview data we used <strong>Affinity Mapping</strong> — an effective way to structure a large dataset. The affinity mapping revealed a recurring issue: <em>difficulties with integrating into banking and administrative systems, and the vital need for timely access to accurate information.</em></p>
+        <div class="cs-stats" style="margin-top:1.5rem;">
+          <div class="cs-stat"><div class="cs-stat-num">8</div><div class="cs-stat-label">Semi-structured interviews conducted</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">6</div><div class="cs-stat-label">Affinity map categories identified</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">1</div><div class="cs-stat-label">Recurring core issue: access to accurate information</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Affinity map categories:</strong> Government agency / private companies · Housing related · Work related · Cultural and social aspects · Suggestions · Undefined/Other</p>
+        <img src="images/project/sweasy/affinity-mapping.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'sweasy-affinity-mapping')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 03 Benchmarking -->
+      <div>
+        <div class="cs-section-label">03 — Benchmarking</div>
+        <div class="cs-section-title">EXISTING SOLUTIONS</div>
+        <p class="cs-text">Three existing services for people moving to Sweden were benchmarked to identify gaps:</p>
+        <div class="cs-grid-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:12px;letter-spacing:0.1em;margin-bottom:0.5rem;">OFFICIALSWEDISHSERVICES.SE</div>
+            <p class="cs-text" style="color:var(--color-secondary);">Government chatbot — personalized guide for relocating to Sweden for work</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:12px;letter-spacing:0.1em;margin-bottom:0.5rem;">SWEDEN.SE</div>
+            <p class="cs-text" style="color:var(--color-secondary);">"10 steps when moving to Sweden" — chronological guide but lacks interdependence between services</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:12px;letter-spacing:0.1em;margin-bottom:0.5rem;">VISITSTOCKHOLM.COM</div>
+            <p class="cs-text" style="color:var(--color-secondary);">Live & Work section with insider tips — but fragmented and not tailored to individual needs</p>
+          </div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;"><strong>Gap identified:</strong> No existing service visualises how administrative processes are <em>interconnected</em> and interdependent — users cannot see which documents they need first to unlock the next step.</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 04 User Persona & Define -->
+      <div>
+        <div class="cs-section-label">04 — User Persona & Define</div>
+        <div class="cs-section-title">AISHA — IMMIGRANT TO STOCKHOLM</div>
+        <p class="cs-text"><strong>Target group:</strong> Immigrants who moved to Stockholm for work.</p>
+        <div style="border:1px solid var(--color-border);padding:1.5rem;margin-top:1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+          <div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:0.5rem;">AISHA, 32 — Software Developer at Ericsson</div>
+            <p class="cs-text" style="color:var(--color-secondary);margin-bottom:0.75rem;">Origin: India, Bangalore · Location: Stockholm, Sweden</p>
+            <p class="cs-text"><strong>Needs:</strong> Job stability · Smooth administrative processes · Overcoming language barrier · Building a social network · Supporting family in India</p>
+          </div>
+          <div>
+            <p class="cs-text"><strong>Frustrations:</strong> Administrative challenges · Language barrier · Social isolation · Cultural adjustment</p>
+            <p class="cs-text" style="margin-top:0.75rem;"><strong>Motivations:</strong> Exploring Sweden's culture · Love for travel · Open to learning · Cherishes friendships</p>
+          </div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;"><strong>How Might We Statement:</strong> How might we help immigrants find the right information at the right time about the different stages of the banking and administrative processes — and how these services are interdependent?</p>
+        <img src="images/project/sweasy/scenario-cards-pov.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'sweasy-scenario-cards')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 05 Ideation -->
+      <div>
+        <div class="cs-section-label">05 — Ideation</div>
+        <div class="cs-section-title">FROM BRAINSTORMING TO PROTOTYPE</div>
+        <p class="cs-text">Four ideation methods were used to generate and refine ideas:</p>
+        <div class="cs-stats" style="margin-top:1.5rem;">
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">BRAINSTORMING</div><div class="cs-stat-label">Create lots of ideas in a short time</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">YES, AND...</div><div class="cs-stat-label">Build upon and extend each other's ideas</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">CRAZY 8</div><div class="cs-stat-label">Encourage out-of-the-box thinking</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">NEGATIVE THINKING</div><div class="cs-stat-label">Spark innovative thinking by inverting assumptions</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;">Ideas explored included: AI Banking Assistant · Blockchain Identity Platform · Geo-tagging of authorities · Skill tree of documents · Progress bar of waiting times · Gamified onboarding (like Monopoly).</p>
+        <p class="cs-text" style="margin-top:1rem;">The concept of an <strong>interactive service map</strong> — showing how documents and services are connected — emerged as the strongest direction. This led to sketching, Lo-Fi prototyping (node-based map), and Hi-Fi prototyping in Figma.</p>
+        <img src="images/project/sweasy/brainstorming-sketches.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'sweasy-brainstorming')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 06 Usability Testing -->
+      <div>
+        <div class="cs-section-label">06 — Usability Testing & Iterations</div>
+        <div class="cs-section-title">TEST → FEEDBACK → IMPROVE</div>
+        <p class="cs-text"><strong>Methods used:</strong> Moderated usability testing · Think aloud protocol · Observation · Contextual inquiry · Clickstream analysis</p>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Key feedback from users:</strong></p>
+        <ul class="cs-list">
+          <li><strong>Readability & size</strong> — Service map icons were too small, compromising readability</li>
+          <li><strong>Information overload</strong> — Overwhelming to view the full service map at once; users want less shown at a time</li>
+          <li><strong>How to use the map</strong> — Users didn't understand that icons were clickable</li>
+          <li><strong>Lack of information</strong> — Confusion between a bank account and BankID; unclear document purposes</li>
+          <li><strong>Wishlist uncertainty</strong> — No clear indicator whether a document was on Wishlist or already obtained</li>
+          <li><strong>Color confusion</strong> — Different colours made users confused about categories</li>
+        </ul>
+        <p class="cs-text" style="margin-top:1.5rem;"><strong>Improvements made:</strong></p>
+        <ul class="cs-list">
+          <li><strong>Skill icons</strong> — Increased size & reduced information density to avoid overwhelming users</li>
+          <li><strong>Added iconography</strong> — Star (Wishlist) and check mark (Obtained) icons for clear system status</li>
+          <li><strong>Legend</strong> — Added colour legend to service map to explain document categories</li>
+          <li><strong>Add to Wishlist</strong> — Button added in zoomed service view for easier access</li>
+          <li><strong>Profile view</strong> — Consistent iconography, visible Back button, location indicator</li>
+          <li><strong>Instruction tooltip</strong> — "Hey there! This is your personalized service map. Click on any service to get started."</li>
+        </ul>
+        <img src="images/project/sweasy/usability-test.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'sweasy-usability-test')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 07 Final Product & Future Scope -->
+      <div>
+        <div class="cs-section-label">07 — Final Product & Future Scope</div>
+        <div class="cs-section-title">SWEASY — YOUR GATEWAY TO INFORMATION THAT'S EASY</div>
+        <p class="cs-text">The final product is a personalized service map that visualises the interdependencies between Swedish administrative documents and services. Users can click any service node to see the next steps, add items to a Wishlist, and mark documents as obtained — all in one place.</p>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Storyboard — Aisha's journey:</strong> Arrived in Stockholm overwhelmed → visited Skatteverket confused → colleague recommended Sweasy → used the map to find documents needed for BankID → successfully completed all her documents.</p>
+        <p class="cs-text" style="margin-top:1.5rem;"><strong>Future scope:</strong></p>
+        <ul class="cs-list">
+          <li>Full document process tracking with estimated processing times</li>
+          <li>Map information with geo-tagged authority locations</li>
+          <li>Zoom in/out of the service map</li>
+          <li>More Swedish services (e.g. hospitals, housing)</li>
+          <li>Wishlist auto-updates with a shared database across all agencies</li>
+        </ul>
+        <img src="images/project/sweasy/final-product-screens.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'sweasy-final-screens')">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Shrine Case Study -->
+  <div id="pd-case-study-shrine" class="pd-case-study-section" style="display:none; border-top:1px solid var(--color-border);">
+    <div class="cs-wrap">
+
+      <!-- 01 Inspiration -->
+      <div>
+        <div class="cs-section-label">01 — Inspiration</div>
+        <div class="cs-section-title">CELEBRITY WORSHIP & THE ILLUSION OF REALITY</div>
+        <p class="cs-text">A friend's experience sparked this project — she posted a comment criticising her favourite celebrity online, and was harassed by fans for months. This raised a question: <em>Why would strangers attack someone they don't know, all for a celebrity who doesn't know them?</em></p>
+        <div class="cs-stats">
+          <div class="cs-stat"><div class="cs-stat-num">51.7B</div><div class="cs-stat-label">Global internet users in 2021 — social media fuels celebrity worship</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">74.4%</div><div class="cs-stat-label">Internet penetration rate in China</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">148 min</div><div class="cs-stat-label">Average daily social media use since COVID-19</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">73%</div><div class="cs-stat-label">Of age 16–24 use social media to follow celebrities</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1rem;">Research revealed three levels of celebrity worship: <strong>Entertainment-social (77%)</strong>, Intense-personal (20%), and Borderline-pathological (3%). The public's supposed objectivity is often their subjectivity — young people develop unrealistic fantasies and give up real life to follow celebrities.</p>
+        <img src="images/project/shrine/1.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'shrine-research')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 02 Primary Research -->
+      <div>
+        <div class="cs-section-label">02 — Primary Research</div>
+        <div class="cs-section-title">INTERVIEWS & ARTIST REFERENCES</div>
+        <p class="cs-text">User interviews revealed the psychology behind celebrity worship — fans construct imaginary perfect figures and defend them as if protecting their own identity. Three artist references shaped the visual language of the project:</p>
+        <div class="cs-stats" style="margin-top:1.5rem;">
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">Miroku</div><div class="cs-stat-label">Huang Yulong — combining modern elements with traditional religious symbols</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">Lucid Dream</div><div class="cs-stat-label">Johnson Tsang — using visual effect to express the dream world</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">Self-Burial</div><div class="cs-stat-label">Keith Arnatt — presenting visual effects through collage to express the image</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">Pearblossom Hwy.</div><div class="cs-stat-label">David Hockney — collage technique that presents split reality and perspective</div></div>
+        </div>
+        <img src="images/project/shrine/2.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'shrine-primary-research')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 03 Concept & Design -->
+      <div>
+        <div class="cs-section-label">03 — Concept & Design</div>
+        <div class="cs-section-title">MIND MAP, MOODBOARD & TECHNICAL BUILD</div>
+        <p class="cs-text">The concept: people deify celebrities and decorate the place of interaction as a shrine. The collage shows the celebrity created in the way people imagine them — but the final horror collage reveals the reality, not the same as the fantasy.</p>
+        <p class="cs-text" style="margin-top:1rem;">The installation combines <strong>JavaScript</strong> (random collage generation from facial feature images) and <strong>Arduino</strong> (servo motor + PIR/ultrasonic sensor to detect presence and trigger the horror reveal). When a user stares at the collage long enough, the sensor triggers — lights cut out and a disturbing face appears.</p>
+        <img src="images/project/shrine/3.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'shrine-mindmap')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 04 Storyboard & Final -->
+      <div>
+        <div class="cs-section-label">04 — Storyboard & Final Installation</div>
+        <div class="cs-section-title">THE COMPLETE SHRINE</div>
+        <p class="cs-text">The 9-step user journey: user discovers the shrine → observes the holographic collage → interacts via a button → generates random face collages → stares at a satisfying one → sensor detects interaction → lights cut out → a horrifying collage appears → user realises the real face is not the same as the fantasy.</p>
+        <img src="images/project/shrine/4.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'shrine-storyboard')">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phone Grave Case Study -->
+  <div id="pd-case-study-phone-grave" class="pd-case-study-section" style="display:none; border-top:1px solid var(--color-border);">
+    <div class="cs-wrap">
+
+      <!-- 01 Inspiration -->
+      <div>
+        <div class="cs-section-label">01 — Inspiration</div>
+        <div class="cs-section-title">WHERE DO OLD PHONES GO?</div>
+        <p class="cs-text">With the development of technology, cell phones are being updated faster and faster — new models appear every year, and old ones are left behind. Only around <strong>13%</strong> of e-waste is currently recycled. The question that sparked this project: <em>So where do all the old phones go?</em></p>
+        <div class="cs-stats">
+          <div class="cs-stat"><div class="cs-stat-num">34 mo</div><div class="cs-stat-label">Average smartphone replacement cycle (2020)</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">10M</div><div class="cs-stat-label">Unused mobiles in Finland — Finns recycle less than 15%</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">2B</div><div class="cs-stat-label">Second-hand phone units accumulated in China since 2014</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">12%</div><div class="cs-stat-label">Of global e-waste comes from smartphones</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1rem;">1 million cell phones recycled properly yields: Copper 16,000kg · Silver 350kg · Gold 34kg · Palladium 14kg. Yet the processing is costly and technically complex — most end up in drawers or landfills.</p>
+        <img src="images/project/grave/background-research.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'grave-background-research')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 02 Research -->
+      <div>
+        <div class="cs-section-label">02 — Research</div>
+        <div class="cs-section-title">QUESTIONNAIRE & INTERVIEWS</div>
+        <p class="cs-text">A questionnaire and user interviews were conducted to understand why people hold onto old phones and what barriers exist to recycling.</p>
+        <div class="cs-stats" style="margin-top:1.5rem;">
+          <div class="cs-stat"><div class="cs-stat-num">2.4</div><div class="cs-stat-label">Average unused phones per person</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">100%</div><div class="cs-stat-label">Of respondents have unused phones at home</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">80.4%</div><div class="cs-stat-label">Choose to keep their old phone</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">15.7%</div><div class="cs-stat-label">Actually recycle</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Top reasons to keep phones:</strong> Insufficient storage (31.3%), new product releases (29.4%), functions no longer work (21.5%).</p>
+        <p class="cs-text" style="margin-top:0.75rem;"><strong>Interview voices:</strong> "My old phone — I will not throw it away because there are my memories." · "One unused phone is to listen to music, the other has been idle." · "I do not use the phone and do not deal with it."</p>
+        <img src="images/project/grave/questionnaire-interviews.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'grave-questionnaire')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 03 Existing Solutions & Problems -->
+      <div>
+        <div class="cs-section-label">03 — Existing Solutions</div>
+        <div class="cs-section-title">GAPS IN THE MARKET</div>
+        <p class="cs-text">Current options for disposing of phones fall short:</p>
+        <div class="cs-grid-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;letter-spacing:0.1em;margin-bottom:0.75rem;">RECYCLE</div>
+            <p class="cs-text" style="color:#c00;">✗ Leakage of personal information<br>✗ Time-consuming<br>✗ Expensive to decompose</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;letter-spacing:0.1em;margin-bottom:0.75rem;">SELL / DONATE</div>
+            <p class="cs-text" style="color:var(--color-secondary);">Low adoption — most people feel their old phone is too personal to pass on</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;letter-spacing:0.1em;margin-bottom:0.75rem;">APPLE TRADE IN</div>
+            <p class="cs-text" style="color:#c00;">✗ Encourages replacement rather than awareness<br>✗ Apple users only</p>
+          </div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;"><strong>Conclusion:</strong> The number of phones used as backups far exceeds demand. Phones used for music and memory storage are never recycled. The recycling rate is extremely low.</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 04 Design Requirements & References -->
+      <div>
+        <div class="cs-section-label">04 — Design Direction</div>
+        <div class="cs-section-title">DESIGN REQUIREMENTS & REFERENCES</div>
+        <p class="cs-text">Three design principles guided the concept:</p>
+        <div class="cs-stats" style="margin-top:1.5rem;">
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1.2rem;">PROMOTE</div><div class="cs-stat-label">Awareness of reuse</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1.2rem;">AWARE</div><div class="cs-stat-label">What you don't use can help others</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1.2rem;">REMIND</div><div class="cs-stat-label">Danger of improper handling</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;">Two art installations inspired the concept: <strong>Yellow Dust</strong> (C+ Azahara Ubera) — uses light to signal toxic air from improper e-waste disposal; <strong>The Substitute</strong> (Daisy Ginsberg) — expresses endangered animals through virtual visual effects. Both use sensory experience to make invisible dangers visible.</p>
+        <img src="images/project/grave/mind-map-sketches.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'grave-mind-map')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 05 Concept & Storyboard -->
+      <div>
+        <div class="cs-section-label">05 — Concept</div>
+        <div class="cs-section-title">THE PHONE GRAVE</div>
+        <p class="cs-text">Phone Grave is an interactive installation where recycled phones are given a "burial" — a holographic grave displayed in binary code. The form of the grave is generated from user input, converted to binary, and projected as a hologram. The overall grave display uses binary numbers as its visual language.</p>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Storyboard — 6 steps:</strong></p>
+        <div class="cs-stats" style="margin-top:1rem;">
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">01</div><div class="cs-stat-label">User passes the phone grave and is captivated by the holographic projection</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">02</div><div class="cs-stat-label">The special smell lets users experience the toxic gases from improper e-waste disposal</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">03</div><div class="cs-stat-label">User puts the phone into the recycling machine and enters an epitaph</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">04</div><div class="cs-stat-label">The stench disappears — flowers appear in the soil</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">05</div><div class="cs-stat-label">User gets a card for return visits; holographic projection shows their phone's grave</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1rem;">06</div><div class="cs-stat-label">On return visits, scanning the ID card reveals the current status of their phone</div></div>
+        </div>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 06 Technical & Exhibition -->
+      <div>
+        <div class="cs-section-label">06 — Technical Implementation</div>
+        <div class="cs-section-title">EXHIBITION DESIGN & TESTING</div>
+        <p class="cs-text">The installation is built around four zones: Entrance → Holographic Projection of Phone Grave → Interactive Art Area → Participant's Interactive Area. The machine detects the type of equipment submitted, converts the model number into binary (C++, ASCII to Binary), and displays it on the grave hologram.</p>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Technical stack:</strong> C++ for binary conversion · Holographic projection hardware · NFC / ID card reader for return visits · Olfactory element (stench → aroma transition)</p>
+        <img src="images/project/grave/exhibition-renders.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'grave-exhibition')">
+        <img src="images/project/grave/cpp-binary.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:0.75rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(1,'grave-exhibition')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 07 VI Design -->
+      <div>
+        <div class="cs-section-label">07 — VI Design</div>
+        <div class="cs-section-title">VISUAL IDENTITY</div>
+        <p class="cs-text">A dark, cyberpunk-inspired visual language — teal binary code against black backgrounds, industrial typography. The identity extends across: exhibition posters, participant ID cards (NFC-enabled lanyards), and the holographic display itself. The binary aesthetic reinforces the project's core message: every phone has a digital life worth commemorating.</p>
+        <img src="images/project/grave/vi-system.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'grave-vi')">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Checkmate Case Study -->
+  <div id="pd-case-study-checkmate" class="pd-case-study-section" style="display:none; border-top:1px solid var(--color-border);">
+    <div class="cs-wrap">
+
+      <!-- 01 Background Research -->
+      <div>
+        <div class="cs-section-label">01 — Background Research</div>
+        <div class="cs-section-title">THE PROBLEM WITH REMOTE WORK</div>
+        <p class="cs-text">Remote work has grown exponentially — telecommuting has risen by <strong>159%</strong> since 2009. While workers save an average of <strong>40 minutes</strong> of commuting daily, they face new challenges: juggling 4–5 different software tools in a single workday, missing messages, and losing track of tasks across platforms.</p>
+        <div class="cs-stats">
+          <div class="cs-stat"><div class="cs-stat-num">159%</div><div class="cs-stat-label">Rise in telecommuting since 2009</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">40 min</div><div class="cs-stat-label">Average daily commute saved</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">4–5</div><div class="cs-stat-label">Programs used in a typical workday</div></div>
+          <div class="cs-stat"><div class="cs-stat-num">>4.7M</div><div class="cs-stat-label">People working remotely at least half-time in the US</div></div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;">Since COVID-19, there is a global trend towards telecommuting. The ability to effectively reduce commuting time and focus more on work has accelerated adoption — but the tools haven't kept up.</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 02 Competitive Analysis -->
+      <div>
+        <div class="cs-section-label">02 — Competitive Analysis</div>
+        <div class="cs-section-title">EXISTING TOOLS FALL SHORT</div>
+        <p class="cs-text">Three leading remote work tools were evaluated for their strengths and weaknesses:</p>
+        <div class="cs-grid-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;letter-spacing:0.1em;margin-bottom:0.75rem;">TRELLO</div>
+            <p class="cs-text" style="color:var(--color-electric);margin-bottom:0.5rem;">✓ Clear task assignment and progress tracking</p>
+            <p class="cs-text" style="color:#c00;">✗ No timely communication function</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;letter-spacing:0.1em;margin-bottom:0.75rem;">SLACK</div>
+            <p class="cs-text" style="color:var(--color-electric);margin-bottom:0.5rem;">✓ Multifunction · Widely used</p>
+            <p class="cs-text" style="color:#c00;">✗ Notification problems · Communication breakdowns</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;letter-spacing:0.1em;margin-bottom:0.75rem;">OUTLOOK</div>
+            <p class="cs-text" style="color:var(--color-electric);margin-bottom:0.5rem;">✓ Widely used</p>
+            <p class="cs-text" style="color:#c00;">✗ Messages are difficult to respond to in a timely manner</p>
+          </div>
+        </div>
+        <p class="cs-text" style="margin-top:1.5rem;"><strong>Key insight:</strong> One-time notifications and multi-software switching lead to forgotten replies and missed messages — which delays work processes and reduces efficiency.</p>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 03 User Research -->
+      <div>
+        <div class="cs-section-label">03 — User Research</div>
+        <div class="cs-section-title">4 USER PERSONAS</div>
+        <p class="cs-text">Four personas were developed to represent the range of remote workers using productivity tools daily:</p>
+        <div class="cs-grid-3" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;">
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;margin-bottom:0.25rem;">ETHAN, 26 — Data Scientist</div>
+            <p class="cs-text" style="color:var(--color-secondary);margin-bottom:0.75rem;">Low experience · Mid skill</p>
+            <p class="cs-text">"Communication is not timely and I become less efficient. I work overtime to complete tasks."</p>
+            <p class="cs-text" style="margin-top:0.75rem;color:var(--color-electric);">→ Completing own tasks first, then help others</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;margin-bottom:0.25rem;">LING, 46 — Backend Developer</div>
+            <p class="cs-text" style="color:var(--color-secondary);margin-bottom:0.75rem;">High experience · High skill</p>
+            <p class="cs-text">"I have had many years of experience working. It may interrupt me when others are looking for my help."</p>
+            <p class="cs-text" style="margin-top:0.75rem;color:var(--color-electric);">→ Summarizing problems and discussing in daily meetings</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;margin-bottom:0.25rem;">JULIUS, 34 — CEO</div>
+            <p class="cs-text" style="color:var(--color-secondary);margin-bottom:0.75rem;">High experience · Mid skill</p>
+            <p class="cs-text">"New interns are usually unfamiliar with the workflow and ask questions very frequently."</p>
+            <p class="cs-text" style="margin-top:0.75rem;color:var(--color-electric);">→ Explain workflow as clearly as possible for new employees</p>
+          </div>
+          <div style="border:1px solid var(--color-border);padding:1.5rem;">
+            <div style="font-weight:700;font-size:13px;margin-bottom:0.25rem;">MERINA, 20 — Tester Intern</div>
+            <p class="cs-text" style="color:var(--color-secondary);margin-bottom:0.75rem;">Low experience · Low skill</p>
+            <p class="cs-text">"My colleagues are very busy and I need to contact them if they are available to help with a problem."</p>
+            <p class="cs-text" style="margin-top:0.75rem;color:var(--color-electric);">→ Sending emails to team members for a small session</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 04 Design Insight -->
+      <div>
+        <div class="cs-section-label">04 — Design Insight</div>
+        <div class="cs-section-title">THE SOLUTION CONCEPT</div>
+        <p class="cs-text">Checkmate consolidates remote work tools into one unified platform — pulling conversations from different softwares into a single chronological view, so nothing slips through the cracks.</p>
+        <div class="cs-stats" style="margin-top:1.5rem;">
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1.4rem;">01</div><div class="cs-stat-label">Add tasks directly from chat messages to a shared to-do list</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1.4rem;">02</div><div class="cs-stat-label">Desktop prompts remind you of pending to-do items</div></div>
+          <div class="cs-stat"><div class="cs-stat-num" style="font-size:1.4rem;">03</div><div class="cs-stat-label">Notify colleagues when a task is completed automatically</div></div>
+        </div>
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 05 Information Architecture & User Flow -->
+      <div>
+        <div class="cs-section-label">05 — Information Architecture & User Flow</div>
+        <div class="cs-section-title">STRUCTURE & FLOWS</div>
+        <p class="cs-text">The app is structured around three core areas: <strong>Work Schedule</strong> (applications, chatting, to-do list, calendar), <strong>Notification</strong> (normal tasks, important tasks, tasks near due date), and <strong>Settings</strong>. Three key user flows were mapped: login & setup, completing a task, and setting a reminder.</p>
+        <img src="images/project/checkmate/info-architecture.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'checkmate-info-arch')">
+        <img src="images/project/checkmate/user-flow-diagram.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:0.75rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'checkmate-user-flow')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 06 Low & High Fidelity -->
+      <div>
+        <div class="cs-section-label">06 — Design Process</div>
+        <div class="cs-section-title">FROM WIREFRAMES TO HIGH FIDELITY</div>
+        <p class="cs-text">Low-fidelity wireframes established the core layout: a sidebar navigation with application integrations, a main chat/task view, and a calendar. User testing surfaced three key issues:</p>
+        <ul class="cs-list">
+          <li>The page needs to be clearer</li>
+          <li>The to-do list needs improvement</li>
+          <li>The chat box dialog doesn't need to be this large</li>
+        </ul>
+        <p class="cs-text" style="margin-top:1rem;">Five high-fidelity screens were designed showcasing: Getting Started onboarding, Main Functions dashboard, Adding Tasks from chat, Two types of tasks, and Notification system.</p>
+        <img src="images/project/checkmate/lofi-wireframes.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'checkmate-process')">
+        <img src="images/project/checkmate/hifi-screens.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:0.75rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(1,'checkmate-process')">
+      </div>
+
+      <hr class="cs-divider">
+
+      <!-- 07 UI Design -->
+      <div>
+        <div class="cs-section-label">07 — UI Design</div>
+        <div class="cs-section-title">DESIGN SYSTEM</div>
+        <p class="cs-text">A calm, professional visual language — warm neutrals with teal accents create a focused workspace feel without visual fatigue during long work sessions.</p>
+        <div class="cs-pills" style="margin-top:1rem;">
+          <span class="cs-pill" style="background:#E9E4DA;">#E9E4DA</span>
+          <span class="cs-pill" style="background:#DCD0C1;">#DCD0C1</span>
+          <span class="cs-pill" style="background:#678786; color:#fff;">#678786</span>
+          <span class="cs-pill" style="background:#445A5E; color:#fff;">#445A5E</span>
+          <span class="cs-pill" style="background:#F5F5F5; border:1px solid #ddd;">#F5F5F5</span>
+        </div>
+        <p class="cs-text" style="margin-top:1rem;"><strong>Typography:</strong> Arial 30pt for titles, Arial 20pt for body — clean and universally readable across operating systems.</p>
+        <p class="cs-text" style="margin-top:0.5rem;"><strong>Story Board:</strong> Six illustrated panels showing the user journey — from missing a deadline due to a missed message, to downloading Checkmate and organizing all tasks in one place.</p>
+        <img src="images/project/checkmate/ui-design.png" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:#111;display:block;margin-top:1.5rem;border-radius:4px;cursor:zoom-in;" onclick="openLightbox(0,'checkmate-ui')">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pd-next" id="pd-next" onclick="goNextProject()">
+    <div>
+      <div class="pd-next-label">Next Project</div>
+      <div class="pd-next-name" id="pd-next-name"></div>
+    </div>
+    <span style="font-family:var(--font-display);font-size:48px;">→</span>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxBg(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">CLOSE ✕</button>
+  <button class="lightbox-prev" onclick="shiftLightbox(-1)">←</button>
+  <div class="lightbox-img ph-dk" id="lightbox-img"></div>
+  <button class="lightbox-next" onclick="shiftLightbox(1)">→</button>
+</div>
+
+<!-- ④ CV ────────────────────────────────────────────────────── -->
+<section id="cv" class="page">
+
+  <div class="cv-header reveal">
+    <div class="cv-name">XIAO<br>SHEN</div>
+    <button class="btn-outline-black" onclick="window.print()">DOWNLOAD PDF ↗</button>
+  </div>
+  <div class="cv-divider"></div>
+  <div class="cv-info-row">
+    <span class="cv-info-label">UX/UI Designer</span>
+    <span class="cv-info-sep">·</span>
+    <span>Helsinki, Finland</span>
+    <span class="cv-info-sep">·</span>
+    <span>xiaoshen.nordic@outlook.com</span>
+    <span class="cv-info-sep">·</span>
+    <span>2025</span>
+  </div>
+
+  <div class="cv-body">
+    <div class="cv-left">
+      <div class="cv-section-title">EXPERIENCE</div>
+
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <div class="cv-company">HAAGA-HELIA UAS</div>
+          <div class="cv-period">NOV. 2022 — APR. 2023</div>
+        </div>
+        <div class="cv-role">Thesis Worker, UX/UI Designer · Helsinki, Finland</div>
+        <ul class="cv-duties">
+          <li>Collaborated with startup partners and academic supervisors to define project goals and research scope</li>
+          <li>Designed interface solutions to support complex workflows and stakeholder requirements</li>
+          <li>Conducted user interviews and usability evaluations to inform research-driven development</li>
+          <li>Created scalable Figma design systems supporting long-term project development</li>
+        </ul>
+      </div>
+
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <div class="cv-company">HIAVA OY</div>
+          <div class="cv-period">JUN. 2022 — NOV. 2022</div>
+        </div>
+        <div class="cv-role">UX/UI Designer, Frontend Developer · Espoo, Finland</div>
+        <ul class="cv-duties">
+          <li>Created wireframes, user flows, and high-fidelity mockups for product</li>
+          <li>Collaborated with developers to align UX with technical feasibility and user needs</li>
+          <li>Conducted data collection and user analysis to optimize user experiences</li>
+        </ul>
+      </div>
+
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <div class="cv-company">MINGLE ADVISORS</div>
+          <div class="cv-period">APR. 2022 — JUN. 2022</div>
+        </div>
+        <div class="cv-role">UX/UI Designer · Hangzhou, China (Online)</div>
+        <ul class="cv-duties">
+          <li>Contributed to internal digital projects by supporting UX/UI design tasks, content structuring, and visual consistency across platforms</li>
+        </ul>
+      </div>
+
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <div class="cv-company">UNFAIR ADVANTAGE OY</div>
+          <div class="cv-period">MAR. 2022 — JUN. 2022</div>
+        </div>
+        <div class="cv-role">Full-stack Developer Trainee · Helsinki, Finland</div>
+        <ul class="cv-duties">
+          <li>Maintained and regularly updated the company's website, improving functionality</li>
+          <li>Assisted in product design and UI/UX enhancements to improve usability</li>
+        </ul>
+      </div>
+
+      <div class="cv-section-title">EDUCATION</div>
+
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <div class="cv-company">KTH ROYAL INSTITUTE OF TECHNOLOGY</div>
+          <div class="cv-period">AUG. 2023 — JAN. 2026</div>
+        </div>
+        <div class="cv-role">MSc Interactive Media Technology · Stockholm, Sweden</div>
+      </div>
+
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <div class="cv-company">AALTO UNIVERSITY (EXCHANGE)</div>
+          <div class="cv-period">AUG. 2024 — DEC. 2024</div>
+        </div>
+        <div class="cv-role">MSc Computer Science (Erasmus Scholarship) · Espoo, Finland</div>
+      </div>
+
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <div class="cv-company">METROPOLIA UNIVERSITY OF APPLIED SCIENCES</div>
+          <div class="cv-period">AUG. 2018 — MAY 2023</div>
+        </div>
+        <div class="cv-role">BEng Information Technology, Embedded System · Espoo, Finland</div>
+      </div>
+
+    </div>
+
+    <div class="cv-right">
+      <p class="cv-intro">
+        UX/UI designer and developer with a background spanning interactive media, embedded systems, and service design. I work at the intersection of research and craft — turning complex problems into clear, human-centred experiences.
+      </p>
+
+      <div class="cv-section-title">SKILLS</div>
+      <div class="cv-skill-group">
+        <div class="cv-skill-label">Design Tools</div>
+        <div class="cv-skill-list">Figma, Adobe XD, Photoshop, Illustrator, InDesign, Final Cut Pro</div>
+      </div>
+      <div class="cv-skill-group">
+        <div class="cv-skill-label">Research</div>
+        <div class="cv-skill-list">Interviews, Focus Groups, Heuristic Evaluation, Research through Design</div>
+      </div>
+      <div class="cv-skill-group">
+        <div class="cv-skill-label">Development</div>
+        <div class="cv-skill-list">HTML, CSS, JavaScript, React, Git</div>
+      </div>
+      <div class="cv-skill-group" style="margin-top:1.5rem;">
+        <div class="cv-skill-label">Languages</div>
+        <div class="cv-skill-list">Chinese (Native) · English (Fluent) · Finnish (Intermediate)</div>
+      </div>
+
+      <div class="cv-section-title" style="margin-top:2rem;">ADDITIONAL</div>
+      <div class="cv-skill-group">
+        <div class="cv-skill-label">Volunteer</div>
+        <div class="cv-skill-list">Photographer at Slush 2024 · On-site Coordinator at Slush 2021 · Chinese New Year Temple Fair 2026</div>
+      </div>
+      <div class="cv-skill-group">
+        <div class="cv-skill-label">Hobbies</div>
+        <div class="cv-skill-list">Photography · Video Editing · Hiking (101k Camino de Santiago) · Bouldering · Reading</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <span>© 2026 Xiao Shen</span>
+    <div class="site-footer-name">XIAO SHEN</div>
+    <a href="#contact" onclick="navigate('contact')">xiaoshen.nordic@outlook.com</a>
+  </footer>
+</section>
+
+<!-- ⑤ CONTACT ───────────────────────────────────────────────── -->
+<section id="contact" class="page">
+
+  <div class="contact-hero reveal">
+    <div class="contact-slogan">LET'S<br>WORK<br>TOGETHER</div>
+    <div class="contact-hero-photo" style="overflow:hidden;"><img src="images/IMG_5310.JPG" style="width:100%;height:auto;display:block;"></div>
+  </div>
+
+  <div class="contact-info-bar">
+    <span class="contact-info-label">EMAIL</span>
+    <span class="contact-info-sep">·</span>
+    <span class="contact-email-copy" id="email-copy" onclick="copyEmail()">xiaoshen.nordic@outlook.com</span>
+    <span class="contact-info-sep" style="margin:0 1.5rem;">·</span>
+    <span class="contact-info-label">BASED IN</span>
+    <span class="contact-info-sep">·</span>
+    <span>Helsinki, Finland</span>
+    <span class="contact-info-sep" style="margin:0 1.5rem;">·</span>
+    <span class="contact-info-label">RESPONSE TIME</span>
+    <span class="contact-info-sep">·</span>
+    <span>Within 24h</span>
+  </div>
+
+  <div class="contact-form-section">
+
+    <form id="contact-form" onsubmit="submitForm(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="c-name">Name</label>
+        <input class="form-input" type="text" id="c-name" placeholder="Your name">
+        <div class="form-error" id="err-name">Please enter your name.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="c-email">Email</label>
+        <input class="form-input" type="email" id="c-email" placeholder="your@email.com">
+        <div class="form-error" id="err-email">Please enter a valid email.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="c-type">Project Type</label>
+        <select class="form-select" id="c-type">
+          <option value="" disabled selected>Select a type</option>
+          <option>Branding</option>
+          <option>Web Design</option>
+          <option>Photography</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="c-msg">Message</label>
+        <textarea class="form-textarea" id="c-msg" placeholder="Tell me about your project…"></textarea>
+        <div class="form-error" id="err-msg">Message must be at least 20 characters.</div>
+      </div>
+      <div id="form-submit-area">
+        <button type="submit" class="form-submit">SEND MESSAGE →</button>
+      </div>
+      <div class="form-success" id="form-success">MESSAGE SENT ✓</div>
+    </form>
+
+  </div>
+
+
+  <footer class="site-footer">
+    <span>© 2026 Xiao Shen</span>
+    <div class="site-footer-name">XIAO SHEN</div>
+    <a href="mailto:xiaoshen.nordic@outlook.com">xiaoshen.nordic@outlook.com</a>
+  </footer>
+</section>
+
+</div><!-- end .page-content -->
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+/* ── ROUTING ── */
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(page);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo(0, 0);
+    history.pushState(null, '', '#' + page);
+  }
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === page);
+  });
+  // Trigger reveal animations
+  setTimeout(() => initReveal(), 50);
+}
+
+window.addEventListener('hashchange', () => {
+  const hash = location.hash.replace('#','') || 'about';
+  navigate(hash);
+});
+
+// ── Case study mini slider ─────────────────────────────────
+const csSliderState = {};
+function csGoTo(id, idx) {
+  const wrap = document.getElementById('cs-slider-' + id);
+  if (!wrap) return;
+  const total = wrap.querySelectorAll('.cs-mini-track img').length;
+  idx = (idx + total) % total;
+  csSliderState[id] = idx;
+  wrap.querySelector('.cs-mini-track').style.transform = `translateX(-${idx * (100/total)}%)`;
+  wrap.querySelectorAll('.cs-dot[data-slider="'+id+'"]').forEach((d,i) => d.style.opacity = i===idx ? '1' : '0.4');
+}
+function csSlide(id, dir) {
+  csGoTo(id, (csSliderState[id] || 0) + dir);
+}
+// Touch swipe for mini sliders
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.cs-mini-slider').forEach(wrap => {
+    let sx = 0;
+    const id = wrap.id.replace('cs-slider-','');
+    wrap.addEventListener('touchstart', e => sx = e.touches[0].clientX, {passive:true});
+    wrap.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 40) csSlide(id, dx < 0 ? 1 : -1);
+    });
+  });
+});
+
+// Init on load
+(function() {
+  const hash = location.hash.replace('#','') || 'about';
+  navigate(hash);
+})();
+
+
+/* ── NAV SCROLL ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 100);
+});
+
+/* ── MOBILE MENU ── */
+function toggleMobile() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+/* ── REVEAL ANIMATIONS (IntersectionObserver) ── */
+function initReveal() {
+  const els = document.querySelectorAll('.page.active .reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(el => {
+    el.classList.remove('visible');
+    io.observe(el);
+  });
+}
+
+/* ── PROJECT FILTER ── */
+function filterProjects(btn, cat) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.project-row').forEach(row => {
+    const show = cat === 'all' || row.dataset.category === cat;
+    row.style.display = show ? 'block' : 'none';
+  });
+}
+
+/* ── PROJECT DETAIL ── */
+const projects = [
+  {
+    id: 'phone-grave',
+    num: '01',
+    title: 'Phone Grave',
+    cat: 'Interaction · Graphic',
+    year: '2022',
+    tools: ['Interaction Design','Graphic Design','Photoshop','Rhino'],
+    desc: 'Due to the development of technology, phones are updated at an increasingly rapid pace. Phone Grave is an interactive way to encourage people to recycle their unused mobile phones — whenever a phone is recycled, a phone grave appears in binary form through holographic projection.',
+    imgs: ['images/project/grave/exhibition-3d-render.png'],
+    imgBg: '#0a0f1a',
+    caseStudy: 'phone-grave'
+  },
+  {
+    id: 'run-away',
+    num: '02',
+    title: 'Run Away',
+    cat: 'UX · UI · Mobile',
+    year: '2022',
+    tools: ['UX Research','UI Design','Mobile App','Adobe XD','Arduino IDE'],
+    desc: 'More and more international students are coming to Finland, and socializing is becoming a problem. This mobile app brings together all the local student activities and promotes friendships through a new matching method, so that people are not lonely and depressed.',
+    imgs: ['images/project/runaway/Event page.png','images/project/runaway/friend-page.png','images/project/runaway/no-event.png'],
+    imgBg: '#FFC107',
+    phoneGallery: true,
+    caseStudy: 'run-away'
+  },
+  {
+    id: 'shrine',
+    num: '03',
+    title: 'Shrine',
+    cat: 'Installation · Exhibition',
+    year: '2022',
+    tools: ['Installation Design','Exhibition Design','VS Code','Arduino','Photoshop'],
+    desc: 'In modern society, the cult of celebrity causes people to indulge in fantasies and ignore reality. This project combines traditional shrine ideas with modern technology, using interactive installation to show that people addicted to their illusions may be scared by reality.',
+    imgs: ['images/project/shrine/WechatIMG459.jpeg'],
+    video: 'https://youtu.be/vBiNnotRfMI',
+    caseStudy: 'shrine'
+  },
+  {
+    id: 'color-paradox',
+    num: '04',
+    title: 'Color Paradox',
+    cat: 'Website · UX · UI',
+    year: '2022',
+    tools: ['UX Research','UI Design','Adobe XD','Prototyping'],
+    desc: 'A photo-sharing platform built from a colorblind perspective. After the first login, a color blindness test determines the user\'s type. When a colorblind user shares a photo, a special filtered image appears for non-colorblind users — giving them a sense of what the world looks like through colorblind eyes.',
+    imgs: ['images/project/color/vol2/tag-popup.png'],
+    imgBg: '#0a0a0a',
+    caseStudy: 'color-paradox'
+  },
+  {
+    id: 'checkmate',
+    num: '05',
+    title: 'Checkmate',
+    cat: 'Website · UX · UI',
+    year: '2022',
+    tools: ['Website Design','UX Design','UI Design'],
+    desc: 'A remote work software integration platform that consolidates productivity tools into a unified workspace, reducing context switching and improving team collaboration.',
+    imgs: ['images/project/checkmate/Main.png'],
+    imgBg: '#3d4a47',
+    caseStudy: 'checkmate'
+  },
+  {
+    id: 'sweasy',
+    num: '06',
+    title: 'Sweasy',
+    cat: 'UX · UI · Service Design',
+    year: '2023',
+    tools: ['UX Design','UI Design','Service Design','Figma'],
+    desc: 'Focusing on immigrants\' interdependent experiences in navigating banking and administrative processes in a new country, where success hinges on access to accurate information and collaboration among various administrative services. Designing for interdependence — rethinking tech\'s self-sufficiency bias and valuing human differences.',
+    imgs: ['images/project/sweasy/截屏2026-06-17 12.17.45.png'],
+    link: 'https://www.figma.com/proto/R80RYqtzL1RBHTwec4wJbY/Prototype?node-id=147-10&starting-point-node-id=147%3A2&t=teybg1AjBjmSBp7r-1',
+    caseStudy: 'sweasy'
+  },
+  {
+    id: 'diplomagic',
+    hidden: true,
+    num: '07',
+    title: 'Diplomagic',
+    cat: 'UX · UI · Web Development',
+    year: '2024',
+    tools: ['UX Design','UI Design','React','REST API','Git'],
+    desc: 'A fun quiz-based web app for Harry Potter fans — answer a series of questions to discover whether you\'re a Muggle or a wizard. Designed and developed as a school project with a focus on interactive UX flow and responsive UI.',
+    link: 'https://diplo-magic.web.app',
+    imgs: ['images/projects/diplomagic-1.jpg','images/projects/diplomagic-2.jpg']
+  }
+];
+
+let currentProjectIdx = 0;
+
+function openProjectDetail(header) {
+  const row = header.closest('.project-row');
+  const num = header.querySelector('.project-num').textContent;
+  const idx = projects.findIndex(p => p.num === num);
+  if (idx === -1) return;
+  currentProjectIdx = idx;
+  renderProjectDetail(idx);
+  const detail = document.getElementById('project-detail');
+  detail.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderProjectDetail(idx) {
+  const p = projects[idx];
+  document.getElementById('pd-nav-title').textContent = p.title;
+  document.getElementById('pd-nav-num').textContent = p.num + ' / 0' + projects.length;
+  document.getElementById('pd-category').textContent = p.cat;
+  document.getElementById('pd-title').textContent = p.title;
+  document.getElementById('pd-tools').innerHTML = p.tools.map(t => `<span class="project-tag-pill">${t}</span>`).join('');
+  document.getElementById('pd-description').textContent = p.desc;
+  const extra = document.getElementById('pd-extra');
+  extra.innerHTML = [
+    p.link ? `<a href="${p.link}" target="_blank" style="display:inline-block;margin-top:1.5rem;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-electric);text-decoration:none;">${p.link.includes('figma.com') ? 'VIEW DEMO ↗' : 'VISIT SITE ↗'}</a>` : '',
+    p.video ? `<a href="${p.video}" target="_blank" style="display:inline-block;margin-top:1rem;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-electric);text-decoration:none;margin-left:${p.link?'1.5rem':'0'}">▶ WATCH VIDEO ↗</a>` : ''
+  ].join('');
+
+  // Main image
+  const mainEl = document.getElementById('pd-img-main-inner');
+  if (p.imgs && p.imgs[0]) {
+    const bg = p.imgBg || '';
+    mainEl.style.background = bg;
+    if (p.phoneGallery && p.imgs.length > 1) {
+      mainEl.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;gap:2rem;height:100%;padding:2rem;">${p.imgs.map(src=>`<img src="${src}" style="height:100%;width:auto;max-width:32%;object-fit:contain;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.25);" onerror="this.style.display='none'">`).join('')}</div>`;
+    } else {
+      mainEl.innerHTML = `<img src="${p.imgs[0]}" style="width:100%;height:100%;object-fit:${bg ? 'contain' : 'cover'};padding:${bg ? '1.5rem' : '0'};" onerror="this.style.display='none'">`;
+    }
+  }
+  // Thumbnail grid
+  const gridEl = document.getElementById('pd-img-grid');
+  gridEl.innerHTML = p.phoneGallery ? '' : (p.imgs || []).slice(1).map(src =>
+    `<div class="pd-img-thumb"><img src="${src}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='#ddd'"></div>`
+  ).join('');
+
+  // Case study
+  document.querySelectorAll('.pd-case-study-section').forEach(el => el.style.display = 'none');
+  if (p.caseStudy) {
+    const cs = document.getElementById('pd-case-study-' + p.caseStudy);
+    if (cs) cs.style.display = 'block';
+  }
+
+  // Gallery slider
+  const sliderSection = document.getElementById('pd-gallery-slider');
+  if (p.gallery && p.gallery.length > 0) {
+    sliderSection.style.display = 'block';
+    window._sliderIdx = 0;
+    window._sliderTotal = p.gallery.length;
+    document.getElementById('pd-slider-track').innerHTML = p.gallery.map(src =>
+      `<div class="pd-slider-slide"><img src="${src}" alt=""></div>`
+    ).join('');
+    const dotsEl = document.getElementById('pd-slider-dots');
+    dotsEl.innerHTML = p.gallery.map((_, i) =>
+      `<div class="pd-slider-dot${i===0?' active':''}" onclick="goToSlide(${i})"></div>`
+    ).join('');
+    initSliderSwipe();
+  } else {
+    sliderSection.style.display = 'none';
+  }
+
+  // Next project (skip hidden)
+  let nextIdx = (idx + 1) % projects.length;
+  while (projects[nextIdx].hidden && nextIdx !== idx) nextIdx = (nextIdx + 1) % projects.length;
+  document.getElementById('pd-next-name').textContent = projects[nextIdx].title;
+}
+
+function closeProjectDetail() {
+  document.getElementById('project-detail').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function goNextProject() {
+  let nextIdx = (currentProjectIdx + 1) % projects.length;
+  while (projects[nextIdx].hidden && nextIdx !== currentProjectIdx) nextIdx = (nextIdx + 1) % projects.length;
+  currentProjectIdx = nextIdx;
+  renderProjectDetail(currentProjectIdx);
+}
+
+/* ── PROJECT SLIDER ── */
+function goToSlide(idx) {
+  window._sliderIdx = idx;
+  document.getElementById('pd-slider-track').style.transform = `translateX(-${idx * 100}%)`;
+  document.querySelectorAll('.pd-slider-dot').forEach((d, i) =>
+    d.classList.toggle('active', i === idx)
+  );
+}
+
+function initSliderSwipe() {
+  const wrap = document.getElementById('pd-slider-wrap-inner');
+  if (!wrap) return;
+  let startX = 0, isDragging = false, moved = 0;
+
+  function onStart(x) { startX = x; isDragging = true; moved = 0; }
+  function onMove(x) {
+    if (!isDragging) return;
+    moved = x - startX;
+    const base = -(window._sliderIdx * 100);
+    const pct = (moved / wrap.offsetWidth) * 100;
+    document.getElementById('pd-slider-track').style.transition = 'none';
+    document.getElementById('pd-slider-track').style.transform = `translateX(calc(${base}% + ${moved}px))`;
+  }
+  function onEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    document.getElementById('pd-slider-track').style.transition = '';
+    const total = window._sliderTotal || 1;
+    if (moved < -50 && window._sliderIdx < total - 1) goToSlide(window._sliderIdx + 1);
+    else if (moved > 50 && window._sliderIdx > 0) goToSlide(window._sliderIdx - 1);
+    else goToSlide(window._sliderIdx);
+  }
+
+  wrap.onmousedown  = e => onStart(e.clientX);
+  wrap.onmousemove  = e => onMove(e.clientX);
+  wrap.onmouseup    = () => onEnd();
+  wrap.onmouseleave = () => onEnd();
+  wrap.ontouchstart = e => onStart(e.touches[0].clientX);
+  wrap.ontouchmove  = e => { e.preventDefault(); onMove(e.touches[0].clientX); };
+  wrap.ontouchend   = () => onEnd();
+}
+
+/* ── PROJECT ACCORDION (kept for fallback) ── */
+function toggleProject(header) {
+  openProjectDetail(header);
+}
+
+/* ── PHOTO SERIES ── */
+function activeEventsAlbum(btn, album) {
+  document.querySelectorAll('#events-sub .sports-album-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.series-gallery').forEach(g => g.classList.remove('active'));
+  document.getElementById('gallery-events').classList.add('active');
+}
+
+function activeSeries(btn, series) {
+  document.querySelectorAll('.series-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const sportsSub = document.getElementById('sports-sub');
+  const eventsSub = document.getElementById('events-sub');
+  const mainMosaic = document.getElementById('photo-mosaic-main');
+  document.querySelectorAll('.sports-gallery').forEach(g => g.classList.remove('active'));
+  eventsSub.classList.remove('visible');
+  sportsSub.classList.remove('visible');
+
+  document.querySelectorAll('.sports-gallery, .series-gallery').forEach(g => g.classList.remove('active'));
+
+  if (series === 'sports') {
+    sportsSub.classList.add('visible');
+    mainMosaic.style.display = 'none';
+    document.getElementById('gallery-volleyball').classList.add('active');
+    document.querySelectorAll('.sports-album-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-album="volleyball"]').classList.add('active');
+  } else if (series === 'landscape') {
+    sportsSub.classList.remove('visible');
+    mainMosaic.style.display = 'none';
+    document.getElementById('gallery-landscape').classList.add('active');
+  } else if (series === 'events') {
+    sportsSub.classList.remove('visible');
+    document.getElementById('events-sub').classList.add('visible');
+    mainMosaic.style.display = 'none';
+    document.getElementById('gallery-events').classList.add('active');
+    document.querySelectorAll('#events-sub .sports-album-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-album="slush"]').classList.add('active');
+  } else {
+    sportsSub.classList.remove('visible');
+    mainMosaic.style.display = 'grid';
+  }
+}
+
+function activeSportsAlbum(btn, album) {
+  document.querySelectorAll('.sports-album-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.sports-gallery').forEach(g => g.classList.remove('active'));
+  const target = document.getElementById('gallery-' + album);
+  if (target) target.classList.add('active');
+}
+
+/* ── LIGHTBOX ── */
+const lightboxSets = {
+  main: ['images/film/1.JPG','images/film/081070671lf0dc699569fe7fbe7f37ff.jpg','images/film/2302f5c06v584b52ec0bbe2022f02aec.jpg','images/film/42411ac4bvc30b48d162d8ef89a50d2b.jpg','images/film/6966df612nd6a56f3c3b438602141926.jpg','images/film/8074449f2s9dd2650bf1effd3970ef1f.jpg','images/film/a6f06e41dp5205c9a6ece721cff3c738.jpg','images/film/028f97ffeoa82106bd38362e4d63a338 3.JPG','images/film/12b3d5457gb532a97050cb9eb4c987ff 2.jpg','images/film/2c7c1de2dq7684900700547a7b86a78c 2.JPG','images/film/2de0df4bdv88e51c98cebb83bf6f22fc 3.JPG','images/film/386a12295ga74db4f148504e25c05489 2.jpg','images/film/3a02f3504jd4b70a9111abbb94e2b3de.JPG','images/film/429ed395ep513598406086d713e66b21.jpg','images/film/5dc29e971uad4533850c53577c5674b7.jpg','images/film/5eda3d8d5ne9bcf20d53d0b88f694b3c 2.JPG','images/film/7d2c2bc05m7a0461175bb7923e855c1d.jpg','images/film/8a065da22u59c916c5ac9bbc10cec967.JPG','images/film/9497e7bb1l4b1ee03ea7ff773770e092.jpg','images/film/IMG_9737.JPG','images/film/cb4ebcf27ufdef6d5ed14ecd435257f2.jpg','images/film/eb31940d0ncedf62af884158529f2704 2.JPG','images/film/ec7314be2t703a4a4dcd69747b048e53.JPG','images/film/ed592e46bqe16e39cd976a44d9f44538 3.JPG','images/film/1983b5ec6k41f749439b844c624ec1b3 2.JPG','images/film/000001 2.jpg','images/film/000001.jpg','images/film/000026.jpg','images/film/000047.jpg','images/film/000050(2).jpg','images/film/000055.jpg','images/film/000064.jpg','images/film/000066(1).jpg','images/film/IMG_3811 2.jpg','images/film/R1-02.jpeg','images/film/R1-04.jpeg','images/film/R1-28A.jpeg'],
+  volleyball: ['DSC_2242','DSC_2345','DSC_2437','DSC_2675','DSC_2805','DSC_2984','DSC_3015','DSC_3102'].map(f=>'images/sports/volleyball/'+f+'.jpg'),
+  events: ['images/events/slush/Slush2024_Xiao_Shen.jpg','images/events/slush/Slush2024_Xiao_Shen-5 2.jpg','images/events/slush/Slush2024_Xiao_Shen-10.jpg','images/events/slush/Slush2024_Xiao_Shen-16.jpg','images/events/slush/Slush2024_Xiao_Shen-31.jpg','images/events/slush/Slush2024_Xiao_Shen-31-2.jpg','images/events/slush/IMG_8670.jpg','images/events/slush/IMG_8678.jpg'],
+  landscape: ['DSC_3412 2','DSC_3414','DSC_3498','DSC_3647 2','DSC_3652 2','DSC_3653 2'].map(f=>'images/landscape/'+f+'.jpg'),
+  climbing: ['IMG_0739.jpg','IMG_0740.jpg','IMG_1373.JPG','IMG_1376.JPG','IMG_1380.JPG','IMG_1381.JPG'].map(f=>'images/sports/climibing/'+f),
+  'color-hifi': ['images/project/color/hifi-screens.png','images/project/color/hifi-screens-2.png'],
+  'color-interview': ['images/project/color/interview-doc.png'],
+  'color-research': ['images/project/color/research-chart.png'],
+  'runaway-persona': ['images/project/runaway/persona-cards.png'],
+  'runaway-lofi': ['images/project/runaway/lofi-wireframes.png','images/project/runaway/user-flow.png'],
+  'runaway-hifi': ['images/project/runaway/hifi-screens.png'],
+  'runaway-arduino': ['images/project/runaway/arduino-demo.png'],
+  'checkmate-process': ['images/project/checkmate/lofi-wireframes.png','images/project/checkmate/hifi-screens.png'],
+  'checkmate-ui': ['images/project/checkmate/ui-design.png'],
+  'grave-exhibition': ['images/project/grave/exhibition-renders.png','images/project/grave/cpp-binary.png'],
+  'grave-vi': ['images/project/grave/vi-system.png'],
+  'shrine-research': ['images/project/shrine/1.png'],
+  'shrine-primary-research': ['images/project/shrine/2.png'],
+  'shrine-mindmap': ['images/project/shrine/3.png'],
+  'shrine-storyboard': ['images/project/shrine/4.png'],
+  'grave-background-research': ['images/project/grave/background-research.png'],
+  'grave-questionnaire': ['images/project/grave/questionnaire-interviews.png'],
+  'grave-mind-map': ['images/project/grave/mind-map-sketches.png'],
+  'sweasy-affinity-mapping': ['images/project/sweasy/affinity-mapping.png'],
+  'sweasy-scenario-cards': ['images/project/sweasy/scenario-cards-pov.png'],
+  'sweasy-brainstorming': ['images/project/sweasy/brainstorming-sketches.png'],
+  'sweasy-usability-test': ['images/project/sweasy/usability-test.png'],
+  'sweasy-final-screens': ['images/project/sweasy/final-product-screens.png'],
+  'checkmate-user-flow': ['images/project/checkmate/user-flow-diagram.png'],
+  'checkmate-info-arch': ['images/project/checkmate/info-architecture.png']
+};
+
+/* ── LIGHTBOX ── */
+let lightboxIndex = 0;
+let lightboxSet = 'main';
+
+function openLightbox(idx, set) {
+  lightboxIndex = idx;
+  lightboxSet = set || 'main';
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function updateLightbox() {
+  const el = document.getElementById('lightbox-img');
+  const set = lightboxSets[lightboxSet];
+  if (!set) return;
+  const src = set[lightboxIndex % set.length];
+  if (src.startsWith('#')) {
+    el.style.background = src;
+    el.innerHTML = '';
+  } else {
+    el.style.background = '#111';
+    el.innerHTML = '<img src="'+src+'" style="width:100%;height:100%;object-fit:contain;">';
+  }
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+function closeLightboxBg(e) {
+  if (e.target === document.getElementById('lightbox')) closeLightbox();
+}
+
+function shiftLightbox(dir) {
+  const set = lightboxSets[lightboxSet] || [];
+  lightboxIndex = (lightboxIndex + dir + set.length) % set.length;
+  updateLightbox();
+}
+
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  if (lb.classList.contains('open')) {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') shiftLightbox(-1);
+    if (e.key === 'ArrowRight') shiftLightbox(1);
+    return;
+  }
+  if (document.getElementById('project-detail').classList.contains('open')) {
+    if (e.key === 'Escape') closeProjectDetail();
+    if (e.key === 'ArrowRight') goNextProject();
+  }
+});
+
+/* ── EMAIL COPY ── */
+function copyEmail() {
+  navigator.clipboard.writeText('xiaoshen.nordic@outlook.com').then(() => {
+    const el = document.getElementById('email-copy');
+    el.textContent = 'COPIED ✓';
+    el.classList.add('copied');
+    setTimeout(() => {
+      el.textContent = 'xiaoshen.nordic@outlook.com';
+      el.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+/* ── CONTACT FORM ── */
+function submitForm(e) {
+  e.preventDefault();
+  let valid = true;
+
+  const name = document.getElementById('c-name');
+  const email = document.getElementById('c-email');
+  const msg = document.getElementById('c-msg');
+
+  // Reset
+  [name, email, msg].forEach(f => { f.classList.remove('error'); });
+  document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+
+  if (!name.value.trim()) {
+    name.classList.add('error');
+    document.getElementById('err-name').classList.add('show');
+    valid = false;
+  }
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRe.test(email.value.trim())) {
+    email.classList.add('error');
+    document.getElementById('err-email').classList.add('show');
+    valid = false;
+  }
+
+  if (msg.value.trim().length < 20) {
+    msg.classList.add('error');
+    document.getElementById('err-msg').classList.add('show');
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  const btn = document.getElementById('form-submit-area');
+  btn.style.opacity = '0.4';
+
+  const data = new FormData();
+  data.append('name', document.getElementById('c-name').value);
+  data.append('email', document.getElementById('c-email').value);
+  data.append('type', document.getElementById('c-type').value);
+  data.append('message', document.getElementById('c-msg').value);
+
+  fetch('https://formspree.io/f/mdavbjgy', {
+    method: 'POST',
+    body: data,
+    headers: { 'Accept': 'application/json' }
+  }).then(res => {
+    btn.style.display = 'none';
+    if (res.ok) {
+      document.getElementById('form-success').classList.add('show');
+    } else {
+      btn.style.opacity = '1';
+      alert('Something went wrong. Please try again.');
+    }
+  }).catch(() => {
+    btn.style.opacity = '1';
+    alert('Network error. Please try again.');
+  });
+}
+</script>
+</body>
+</html>

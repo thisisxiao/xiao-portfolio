@@ -1,0 +1,17 @@
+.DS_Store
+images/film/
+images/events/
+images/sports/
+images/landscape/
+images/project/color/vol2/1/
+images/project/color/vol.1/
+images/projects/
+images/*.JPG
+images/*.HEIC
+images/*.jpg
+images/project/grave/截屏*
+images/project/checkmate/截屏*
+images/project/runaway/截屏*
+images/project/sweasy/截屏*
+images/project/color/截屏*
+images/project/climbing/截屏*

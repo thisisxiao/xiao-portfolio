@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__visualize__read_me",
+      "Bash(ls /Users/oaix58/Downloads/ | head -20)",
+      "Bash(xargs ls -lt)",
+      "Bash(find ~/Library -name \"*.jpg\" -o -name \"*.JPG\" -o -name \"*.jpeg\" -o -name \"*.PNG\" -o -name \"*.png\" 2>/dev/null | xargs ls -lt 2>/dev/null | grep \"Jun 15\" | head -20)",
+      "Bash(rm /Users/oaix58/Downloads/Xiao_portfolio/images/sports/volleyball/*.jpg *)",
+      "Bash(python3 -m http.server 5500)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5500/images/sports/volleyball/DSC_2242.jpg)",
+      "Bash(pkill -f \"python3 -m http.server\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5500/index.html)",
+      "Bash(brew install *)",
+      "Bash(pdftotext /Users/oaix58/Downloads/Submissions_export/Group8_Sweasy.pdf -)",
+      "Bash(pdftoppm -v)",
+      "Bash(pdftotext /Users/oaix58/Downloads/Xiao_CV.pdf -)",
+      "Bash(rm -rf /private/tmp/claude-501/-Users-oaix58-Downloads-Xiao-portfolio/c6d54198-757c-461c-bd00-3358eccdd704/tasks)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git remote *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(git config *)",
+      "Bash(git reset *)",
+      "Bash(git update-ref *)",
+      "Bash(git rm *)",
+      "Bash(xargs du -sh)",
+      "Bash(xargs -I{} stat -f \"%z %N\" {})",
+      "Bash(awk '{sum+=$1} END {print sum/1024/1024 \" MB total\"}')",
+      "Bash(awk '{printf \"%.1f MB  %s\\\\n\", $1/1024/1024, $2}')",
+      "Bash(awk '{sum+=$1} END {printf \"%.1f MB total\\\\n\", sum/1024/1024}')"
+    ]
+  }
+}
